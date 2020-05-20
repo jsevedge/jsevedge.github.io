@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Personal Musings</title>
+    <title>Home on James Sevedge</title>
     <link>https://jsevedge.github.io/</link>
-    <description>Recent content on Personal Musings</description>
+    <description>Recent content in Home on James Sevedge</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Wed, 20 May 2020 00:00:00 +0000</lastBuildDate>
@@ -17,7 +17,7 @@
       <pubDate>Wed, 20 May 2020 00:00:00 +0000</pubDate>
       
       <guid>https://jsevedge.github.io/blog/hello-world/</guid>
-      <description>Hello, world!</description>
+      <description>print(&amp;#34;Hello World&amp;#34;) </description>
     </item>
     
   </channel>
