@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Personal Musings</title>
-    <link>https://jsevedge.github.io/</link>
-    <description>Recent content on Personal Musings</description>
+    <title>Blogs on Personal Musings</title>
+    <link>https://jsevedge.github.io/blog/</link>
+    <description>Recent content in Blogs on Personal Musings</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Wed, 20 May 2020 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="https://jsevedge.github.io/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://jsevedge.github.io/blog/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
@@ -18,15 +18,6 @@
       
       <guid>https://jsevedge.github.io/blog/hello-world/</guid>
       <description>Hello, world!</description>
-    </item>
-    
-    <item>
-      <title>About</title>
-      <link>https://jsevedge.github.io/about/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://jsevedge.github.io/about/</guid>
-      <description>About Page</description>
     </item>
     
   </channel>
