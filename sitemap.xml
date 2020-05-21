@@ -8,12 +8,17 @@
   </url>
   
   <url>
-    <loc>https://jsevedge.github.io/blog/</loc>
+    <loc>https://jsevedge.github.io/post/api-development-to-customer-ux/</loc>
     <lastmod>2020-05-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://jsevedge.github.io/blog/hello-world/</loc>
+    <loc>https://jsevedge.github.io/post/</loc>
+    <lastmod>2020-05-20T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://jsevedge.github.io/post/hello-world/</loc>
     <lastmod>2020-05-20T00:00:00+00:00</lastmod>
   </url>
   
