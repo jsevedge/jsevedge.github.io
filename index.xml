@@ -6,14 +6,25 @@
     <description>Recent content in Random Musings on James Sevedge</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 20 May 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://jsevedge.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 19 Oct 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://jsevedge.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Treat your Career Like a Startup</title>
+      <link>https://jsevedge.github.io/post/career-as-a-startup/</link>
+      <pubDate>Tue, 19 Oct 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://jsevedge.github.io/post/career-as-a-startup/</guid>
+      <description>Lately I have been having discussion with both close friends and distant acquaintances on &amp;ldquo;leveling up&amp;rdquo; in a current position, along the way I have formulated a few thoughts on this topic.
+Do the job you want, not the job you have
+It is a well understood concept that you should start doing elements of the job you would like to be promoted into before you get the promotion, so figure out what those elements are and do them when opportunity allows.</description>
+    </item>
+    
     <item>
       <title>API Development (Beyond the Specification Document)</title>
       <link>https://jsevedge.github.io/post/api-development-to-customer-ux/</link>
       <pubDate>Wed, 20 May 2020 00:00:00 +0000</pubDate>
       
       <guid>https://jsevedge.github.io/post/api-development-to-customer-ux/</guid>
-      <description>Creating an API that is well thought out, scales and adopts industry standards can be quite difficult. Creating the API while keeping the end consumer User Experience (UX) at the forefront adds even more cognitive load, however the payoff is worth it in the long run to stay disciplined and consider it from the start. Let&amp;rsquo;s talk about what that flow might look like at a high level including some example tooling and processes.</description>
+      <description>Creating an API that is well thought out, scales and adopts industry standards can be quite difficult. Creating the API while keeping the end consumer User Experience (UX) at the forefront adds even more cognitive load, however the payoff is worth it to stay disciplined and consider it from the start. Let&amp;rsquo;s talk about what that flow might look like at a high level including some example tooling and processes.</description>
     </item>
     
     <item>
@@ -22,7 +33,7 @@
       <pubDate>Wed, 20 May 2020 00:00:00 +0000</pubDate>
       
       <guid>https://jsevedge.github.io/post/hello-world/</guid>
-      <description>Congratulations for making it to an obscure post on an obscure site, now go do something more interesting with your time!</description>
+      <description>Congratulations for making it to an obscure post on an obscure site, check out some of the other posts for better content!</description>
     </item>
     
   </channel>
