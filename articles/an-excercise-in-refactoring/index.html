@@ -37,7 +37,7 @@ It can be daunting to know where exactly to begin with those resources or unders
 <meta itemprop="description" content="In my humble experience any discussion about refactoring should start with Refactoring (Martin Fowler/Kent Beck) and Clean Code (Robert Martin). Having at least a rudimentary understanding of the design patterns presented in Gang of Four is helpful too.
 It can be daunting to know where exactly to begin with those resources or understand why it matters so let&rsquo;s dive into the following concrete example to provide some clarity on what refactoring a module may look like."><meta itemprop="datePublished" content="2021-11-09T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2021-11-09T00:00:00+00:00" />
-<meta itemprop="wordCount" content="1908">
+<meta itemprop="wordCount" content="1918">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="An Excercise In Refactoring"/>
 <meta name="twitter:description" content="In my humble experience any discussion about refactoring should start with Refactoring (Martin Fowler/Kent Beck) and Clean Code (Robert Martin). Having at least a rudimentary understanding of the design patterns presented in Gang of Four is helpful too.
@@ -393,7 +393,7 @@ It can be daunting to know where exactly to begin with those resources or unders
 <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">uploadFiles</span>();
 </code></pre></div><h3 id="extract-functionality">Extract functionality</h3>
 <p>Now <code>uploadFiles</code> is starting to look pretty good, but just because code is not duplicated does not mean it shouldn&rsquo;t be extracted.  If there is a block of code that makes sense to extract out, do it.</p>
-<p>Actions To Take: 1) Extract out <code>login</code> functionality and use it in <code>uploadFiles</code></p>
+<p>Actions To Take: 1) Extract out <code>login</code> functionality and use it in <code>uploadFiles</code> 2) Extract out <code>_generateAndUploadFile</code> functionality and use it in <code>uploadFiles</code></p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">axios</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#39;axios&#39;</span>);
 
 <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">uploadFiles</span>() {
