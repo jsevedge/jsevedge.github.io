@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <title>An Excercise In Refactoring | James Sevedge</title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1">
+    <meta name="generator" content="Hugo 0.87.0" />
+    
+    
+      <META NAME="ROBOTS" CONTENT="INDEX, FOLLOW">
+    
+
+    
+    
+      <link href="/dist/css/app.1cb140d8ba31d5b2f1114537dd04802a.css" rel="stylesheet">
+    
+
+    
+
+    
+      
+    
+
+    
+    
+    <meta property="og:title" content="An Excercise In Refactoring" />
+<meta property="og:description" content="In my humble experience any discussion about refactoring should start with Refactoring (Martin Fowler/Kent Beck) and Clean Code (Robert Martin). Having at least a rudimentary understanding of the design patterns presented in Gang of Four is helpful too.
+It can be daunting to know where exactly to begin with those resources or understand why it matters so let&rsquo;s dive into the following concrete example to provide some clarity on what refactoring a module may look like." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://jsevedge.github.io/articles/an-excercise-in-refactoring/" /><meta property="article:section" content="articles" />
+<meta property="article:published_time" content="2021-11-09T00:00:00+00:00" />
+<meta property="article:modified_time" content="2021-11-09T00:00:00+00:00" />
+
+<meta itemprop="name" content="An Excercise In Refactoring">
+<meta itemprop="description" content="In my humble experience any discussion about refactoring should start with Refactoring (Martin Fowler/Kent Beck) and Clean Code (Robert Martin). Having at least a rudimentary understanding of the design patterns presented in Gang of Four is helpful too.
+It can be daunting to know where exactly to begin with those resources or understand why it matters so let&rsquo;s dive into the following concrete example to provide some clarity on what refactoring a module may look like."><meta itemprop="datePublished" content="2021-11-09T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2021-11-09T00:00:00+00:00" />
+<meta itemprop="wordCount" content="1908">
+<meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="An Excercise In Refactoring"/>
+<meta name="twitter:description" content="In my humble experience any discussion about refactoring should start with Refactoring (Martin Fowler/Kent Beck) and Clean Code (Robert Martin). Having at least a rudimentary understanding of the design patterns presented in Gang of Four is helpful too.
+It can be daunting to know where exactly to begin with those resources or understand why it matters so let&rsquo;s dive into the following concrete example to provide some clarity on what refactoring a module may look like."/>
+
+      
+        
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-Q5B427HWSJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-Q5B427HWSJ');
+</script>
+      
+    
+  </head>
+
+  <body class="ma0 avenir bg-near-white production">
+
+    
+   
+  
+
+  <header>
+    <div class="bg-dark-gray">
+      <nav class="pv3 ph3 ph4-ns" role="navigation">
+  <div class="flex-l justify-between items-center center">
+    <a href="https://jsevedge.github.io" class="f3 fw2 hover-white no-underline white-90 dib">
+      James Sevedge
+    </a>
+    <div class="flex-l items-center">
+      
+
+      
+        <ul class="pl0 mr3">
+          
+          <li class="list f5 f4-ns fw4 dib pr3">
+            <a class="hover-white no-underline white-90" href="/articles/" title="Articles page">
+              Articles
+            </a>
+          </li>
+          
+          <li class="list f5 f4-ns fw4 dib pr3">
+            <a class="hover-white no-underline white-90" href="/about/" title="About page">
+              About
+            </a>
+          </li>
+          
+          <li class="list f5 f4-ns fw4 dib pr3">
+            <a class="hover-white no-underline white-90" href="/contact/" title="Contact page">
+              Contact
+            </a>
+          </li>
+          
+        </ul>
+      
+      
+
+
+
+
+
+
+<a href="http://linkedin.com/in/james-sevedge/" target="_blank" class="link-transition linkedin link dib z-999 pt3 pt0-l mr1" title="LinkedIn link" rel="noopener" aria-label="follow on LinkedIn——Opens in a new window">
+  <svg  height="32px"  style="enable-background:new 0 0 65 65;" version="1.1" viewBox="0 0 65 65" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <path d="M50.837,48.137V36.425c0-6.275-3.35-9.195-7.816-9.195  c-3.604,0-5.219,1.983-6.119,3.374V27.71h-6.79c0.09,1.917,0,20.427,0,20.427h6.79V36.729c0-0.609,0.044-1.219,0.224-1.655  c0.49-1.22,1.607-2.483,3.482-2.483c2.458,0,3.44,1.873,3.44,4.618v10.929H50.837z M22.959,24.922c2.367,0,3.842-1.57,3.842-3.531  c-0.044-2.003-1.475-3.528-3.797-3.528s-3.841,1.524-3.841,3.528c0,1.961,1.474,3.531,3.753,3.531H22.959z M34,64  C17.432,64,4,50.568,4,34C4,17.431,17.432,4,34,4s30,13.431,30,30C64,50.568,50.568,64,34,64z M26.354,48.137V27.71h-6.789v20.427  H26.354z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/>
+</svg>
+
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000" width="8px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/>
+</svg>
+</span></a>
+
+
+<a href="https://github.com/jsevedge" target="_blank" class="link-transition github link dib z-999 pt3 pt0-l mr1" title="Github link" rel="noopener" aria-label="follow on Github——Opens in a new window">
+  <svg  height="32px"  style="enable-background:new 0 0 512 512;" version="1.1" viewBox="0 0 512 512" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+  <path d="M256,32C132.3,32,32,134.8,32,261.7c0,101.5,64.2,187.5,153.2,217.9c11.2,2.1,15.3-5,15.3-11.1   c0-5.5-0.2-19.9-0.3-39.1c-62.3,13.9-75.5-30.8-75.5-30.8c-10.2-26.5-24.9-33.6-24.9-33.6c-20.3-14.3,1.5-14,1.5-14   c22.5,1.6,34.3,23.7,34.3,23.7c20,35.1,52.4,25,65.2,19.1c2-14.8,7.8-25,14.2-30.7c-49.7-5.8-102-25.5-102-113.5   c0-25.1,8.7-45.6,23-61.6c-2.3-5.8-10-29.2,2.2-60.8c0,0,18.8-6.2,61.6,23.5c17.9-5.1,37-7.6,56.1-7.7c19,0.1,38.2,2.6,56.1,7.7   c42.8-29.7,61.5-23.5,61.5-23.5c12.2,31.6,4.5,55,2.2,60.8c14.3,16.1,23,36.6,23,61.6c0,88.2-52.4,107.6-102.3,113.3   c8,7.1,15.2,21.1,15.2,42.5c0,30.7-0.3,55.5-0.3,63c0,6.1,4,13.3,15.4,11C415.9,449.1,480,363.1,480,261.7   C480,134.8,379.7,32,256,32z"/>
+</svg>
+
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000" width="8px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/>
+</svg>
+</span></a>
+
+
+
+
+
+
+
+    </div>
+  </div>
+</nav>
+
+    </div>
+  </header>
+
+
+
+    <main class="pb7" role="main">
+      
+  
+  <article class="flex-wrap w-100 ph4">
+    <header class="mt4 w-100 tc">
+      <aside class="instapaper_ignoref b helvetica tracked">
+          
+        ARTICLES
+      </aside>
+      
+
+
+
+
+  <div id="sharing" class="mt3">
+
+    
+    
+    <a href="https://twitter.com/share?url=https://jsevedge.github.io/articles/an-excercise-in-refactoring/&amp;text=An%20Excercise%20In%20Refactoring" class="twitter no-underline" aria-label="share on Twitter">
+      <svg height="32px"  style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M37.167,22.283c-2.619,0.953-4.274,3.411-4.086,6.101  l0.063,1.038l-1.048-0.127c-3.813-0.487-7.145-2.139-9.974-4.915l-1.383-1.377l-0.356,1.017c-0.754,2.267-0.272,4.661,1.299,6.271  c0.838,0.89,0.649,1.017-0.796,0.487c-0.503-0.169-0.943-0.296-0.985-0.233c-0.146,0.149,0.356,2.076,0.754,2.839  c0.545,1.06,1.655,2.097,2.871,2.712l1.027,0.487l-1.215,0.021c-1.173,0-1.215,0.021-1.089,0.467  c0.419,1.377,2.074,2.839,3.918,3.475l1.299,0.444l-1.131,0.678c-1.676,0.976-3.646,1.526-5.616,1.568  C19.775,43.256,19,43.341,19,43.405c0,0.211,2.557,1.397,4.044,1.864c4.463,1.377,9.765,0.783,13.746-1.568  c2.829-1.673,5.657-5,6.978-8.221c0.713-1.716,1.425-4.851,1.425-6.354c0-0.975,0.063-1.102,1.236-2.267  c0.692-0.678,1.341-1.419,1.467-1.631c0.21-0.403,0.188-0.403-0.88-0.043c-1.781,0.636-2.033,0.551-1.152-0.402  c0.649-0.678,1.425-1.907,1.425-2.267c0-0.063-0.314,0.042-0.671,0.233c-0.377,0.212-1.215,0.53-1.844,0.72l-1.131,0.361l-1.027-0.7  c-0.566-0.381-1.361-0.805-1.781-0.932C39.766,21.902,38.131,21.944,37.167,22.283z M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4  s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/></svg>
+
+    </a>
+
+    
+    <a href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https://jsevedge.github.io/articles/an-excercise-in-refactoring/&amp;title=An%20Excercise%20In%20Refactoring" class="linkedin no-underline" aria-label="share on LinkedIn">
+      <svg  height="32px"  style="enable-background:new 0 0 65 65;" version="1.1" viewBox="0 0 65 65" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <path d="M50.837,48.137V36.425c0-6.275-3.35-9.195-7.816-9.195  c-3.604,0-5.219,1.983-6.119,3.374V27.71h-6.79c0.09,1.917,0,20.427,0,20.427h6.79V36.729c0-0.609,0.044-1.219,0.224-1.655  c0.49-1.22,1.607-2.483,3.482-2.483c2.458,0,3.44,1.873,3.44,4.618v10.929H50.837z M22.959,24.922c2.367,0,3.842-1.57,3.842-3.531  c-0.044-2.003-1.475-3.528-3.797-3.528s-3.841,1.524-3.841,3.528c0,1.961,1.474,3.531,3.753,3.531H22.959z M34,64  C17.432,64,4,50.568,4,34C4,17.431,17.432,4,34,4s30,13.431,30,30C64,50.568,50.568,64,34,64z M26.354,48.137V27.71h-6.789v20.427  H26.354z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/>
+</svg>
+
+    </a>
+  </div>
+
+
+      <h1 class="f1 athelas mt3 mb1">An Excercise In Refactoring</h1>
+      
+      <p class="tracked">
+          By <strong>
+          
+              James Sevedge
+          
+          </strong>
+      </p>
+      
+      
+      <time class="f6 mv4 dib tracked" datetime="2021-11-09T00:00:00Z">November 9, 2021</time>
+
+      
+      
+    </header>
+    <div class="nested-copy-line-height lh-copy serif f4 nested-links nested-img mid-gray center w-50"><p>In my humble experience any discussion about refactoring should start with <a href="https://martinfowler.com/books/refactoring.html">Refactoring</a> (Martin Fowler/Kent Beck) and <a href="https://www.oreilly.com/library/view/clean-code-a/9780136083238/">Clean Code</a> (Robert Martin).  Having at least a rudimentary understanding of the design patterns presented in <a href="https://www.amazon.com/gp/product/0201633612/ref=as_li_tl?ie=UTF8&amp;camp=1789&amp;creative=9325&amp;creativeASIN=0201633612&amp;linkCode=as2&amp;tag=martinfowlerc-20">Gang of Four</a> is helpful too.</p>
+<p>It can be daunting to know where exactly to begin with those resources or understand why it matters so let&rsquo;s dive into the following concrete example to provide some clarity on what refactoring a module <em>may</em> look like.</p>
+<h2 id="refactoring-excercise">Refactoring Excercise</h2>
+<p>Let&rsquo;s start with some code that could use a little (or a lot of!) refactoring…</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">axios</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#39;axios&#39;</span>);
+
+<span style="color:#66d9ef">function</span> <span style="color:#a6e22e">uploadFiles</span>() {
+    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">loginResponse</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">axios</span>({
+        <span style="color:#a6e22e">url</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;https://the-cloud/api/v1/login&#39;</span>,
+        <span style="color:#e6db74">&#39;GET&#39;</span>,
+        <span style="color:#a6e22e">auth</span><span style="color:#f92672">:</span> {
+            <span style="color:#a6e22e">username</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;a_username&#39;</span>,
+            <span style="color:#a6e22e">password</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;a_password&#39;</span>
+        },
+        <span style="color:#a6e22e">validateStatus</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">false</span>
+    });
+    <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">loginResponse</span>.<span style="color:#a6e22e">status</span> <span style="color:#f92672">!==</span> <span style="color:#ae81ff">200</span>) {
+        <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> Error(<span style="color:#e6db74">`HTTP request failed: </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">loginResponse</span>.<span style="color:#a6e22e">status</span><span style="color:#e6db74">}</span><span style="color:#e6db74"> </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">loginResponse</span>.<span style="color:#a6e22e">data</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>)
+    }
+    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">authToken</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">loginResponse</span>.<span style="color:#a6e22e">data</span>.<span style="color:#a6e22e">token</span>;
+    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">encodedCertificateProduction</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">Buffer</span>.<span style="color:#a6e22e">from</span>(<span style="color:#a6e22e">data</span>).<span style="color:#a6e22e">toString</span>(<span style="color:#e6db74">&#39;certificate for production environment&#39;</span>);
+    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">encodedKeyProduction</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">Buffer</span>.<span style="color:#a6e22e">from</span>(<span style="color:#a6e22e">data</span>).<span style="color:#a6e22e">toString</span>(<span style="color:#e6db74">&#39;key for production environment&#39;</span>);
+    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">productionFile</span> <span style="color:#f92672">=</span> {
+        <span style="color:#a6e22e">description</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;Production certificate/key&#39;</span>,
+        <span style="color:#a6e22e">name</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;production_file&#39;</span>,
+        <span style="color:#a6e22e">certificate</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">encodedCertificateProduction</span>,
+        <span style="color:#a6e22e">key</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">encodedKeyProduction</span>,
+        <span style="color:#a6e22e">metadata</span><span style="color:#f92672">:</span> {
+            <span style="color:#a6e22e">env</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;production&#39;</span>
+        }
+    };
+    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">productionFileResponse</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">axios</span>({
+        <span style="color:#a6e22e">url</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;https://the-cloud/api/v1/storage/my-bucket&#39;</span>,
+        <span style="color:#e6db74">&#39;POST&#39;</span>,
+        <span style="color:#a6e22e">headers</span><span style="color:#f92672">:</span> {
+            <span style="color:#a6e22e">Authorization</span><span style="color:#f92672">:</span> <span style="color:#e6db74">`Bearer </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">authToken</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>
+        },
+        <span style="color:#a6e22e">data</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">productionFile</span>,
+        <span style="color:#a6e22e">validateStatus</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">false</span>
+    });
+    <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">productionFileResponse</span>.<span style="color:#a6e22e">status</span> <span style="color:#f92672">!==</span> <span style="color:#ae81ff">200</span>) {
+        <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> Error(<span style="color:#e6db74">`HTTP request failed: </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">productionFileResponse</span>.<span style="color:#a6e22e">status</span><span style="color:#e6db74">}</span><span style="color:#e6db74"> </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">productionFileResponse</span>.<span style="color:#a6e22e">data</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>)
+    }
+    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">encodedCertificateStaging</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">Buffer</span>.<span style="color:#a6e22e">from</span>(<span style="color:#a6e22e">data</span>).<span style="color:#a6e22e">toString</span>(<span style="color:#e6db74">&#39;certificate for staging environment&#39;</span>);
+    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">encodedKeyStaging</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">Buffer</span>.<span style="color:#a6e22e">from</span>(<span style="color:#a6e22e">data</span>).<span style="color:#a6e22e">toString</span>(<span style="color:#e6db74">&#39;key for staging environment&#39;</span>);
+    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">stagingFile</span> <span style="color:#f92672">=</span> {
+        <span style="color:#a6e22e">description</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;Staging certificate/key&#39;</span>,
+        <span style="color:#a6e22e">name</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;staging_file&#39;</span>,
+        <span style="color:#a6e22e">certificate</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">encodedCertificateStaging</span>,
+        <span style="color:#a6e22e">key</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">encodedKeyStaging</span>,
+        <span style="color:#a6e22e">metadata</span><span style="color:#f92672">:</span> {
+            <span style="color:#a6e22e">env</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;staging&#39;</span>
+        }
+    };
+    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">stagingFileResponse</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">axios</span>({
+        <span style="color:#a6e22e">url</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;https://the-cloud/api/v1/storage/my-bucket&#39;</span>,
+        <span style="color:#e6db74">&#39;POST&#39;</span>,
+        <span style="color:#a6e22e">headers</span><span style="color:#f92672">:</span> {
+            <span style="color:#a6e22e">Authorization</span><span style="color:#f92672">:</span> <span style="color:#e6db74">`Bearer </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">authToken</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>
+        },
+        <span style="color:#a6e22e">data</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">stagingFile</span>,
+        <span style="color:#a6e22e">validateStatus</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">false</span>
+    });
+    <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">stagingFileResponse</span>.<span style="color:#a6e22e">status</span> <span style="color:#f92672">!==</span> <span style="color:#ae81ff">200</span>) {
+        <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> Error(<span style="color:#e6db74">`HTTP request failed: </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">stagingFileResponse</span>.<span style="color:#a6e22e">status</span><span style="color:#e6db74">}</span><span style="color:#e6db74"> </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">stagingFileResponse</span>.<span style="color:#a6e22e">data</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>)
+    }
+}
+
+<span style="color:#66d9ef">await</span> <span style="color:#a6e22e">uploadFiles</span>();
+</code></pre></div><p>How hard was it tell the purpose of the code and did the code &ldquo;smell&rdquo; at all to you?  If so, how?</p>
+<h3 id="readability">Readability</h3>
+<p>The first thing you notice may be how hard it is to understand what the code is doing, so let&rsquo;s add some comments (for now, more on that later) to help the developers reading this code.</p>
+<p>Actions to take: 1) Added some comments to <code>uploadFiles</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">axios</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#39;axios&#39;</span>);
+
+<span style="color:#66d9ef">function</span> <span style="color:#a6e22e">uploadFiles</span>() {
+    <span style="color:#75715e">// login to &#34;the cloud&#34; and get a token
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">loginResponse</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">axios</span>({
+        <span style="color:#a6e22e">url</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;https://the-cloud/api/v1/login&#39;</span>,
+        <span style="color:#e6db74">&#39;GET&#39;</span>,
+        <span style="color:#a6e22e">auth</span><span style="color:#f92672">:</span> {
+            <span style="color:#a6e22e">username</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;a_username&#39;</span>,
+            <span style="color:#a6e22e">password</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;a_password&#39;</span>
+        },
+        <span style="color:#a6e22e">validateStatus</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">false</span>
+    });
+    <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">loginResponse</span>.<span style="color:#a6e22e">status</span> <span style="color:#f92672">!==</span> <span style="color:#ae81ff">200</span>) {
+        <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> Error(<span style="color:#e6db74">`HTTP request failed: </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">loginResponse</span>.<span style="color:#a6e22e">status</span><span style="color:#e6db74">}</span><span style="color:#e6db74"> </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">loginResponse</span>.<span style="color:#a6e22e">data</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>)
+    }
+    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">authToken</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">loginResponse</span>.<span style="color:#a6e22e">data</span>.<span style="color:#a6e22e">token</span>;
+    <span style="color:#75715e">// encode production certificate/key
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">encodedCertificateProduction</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">Buffer</span>.<span style="color:#a6e22e">from</span>(<span style="color:#a6e22e">data</span>).<span style="color:#a6e22e">toString</span>(<span style="color:#e6db74">&#39;certificate for production environment&#39;</span>);
+    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">encodedKeyProduction</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">Buffer</span>.<span style="color:#a6e22e">from</span>(<span style="color:#a6e22e">data</span>).<span style="color:#a6e22e">toString</span>(<span style="color:#e6db74">&#39;key for production environment&#39;</span>);
+    <span style="color:#75715e">// create production certificate/key file contents (axios will JSON stringify the JavaScript object for us)
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">productionFile</span> <span style="color:#f92672">=</span> {
+        <span style="color:#a6e22e">description</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;Production certificate/key&#39;</span>,
+        <span style="color:#a6e22e">name</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;production_file&#39;</span>,
+        <span style="color:#a6e22e">certificate</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">encodedCertificateProduction</span>,
+        <span style="color:#a6e22e">key</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">encodedKeyProduction</span>,
+        <span style="color:#a6e22e">metadata</span><span style="color:#f92672">:</span> {
+            <span style="color:#a6e22e">env</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;production&#39;</span>
+        }
+    };
+    <span style="color:#75715e">// upload production certificate/key file contents (uses name in HTTP body to create a file under &#34;my-bucket&#34;)
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">productionFileResponse</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">axios</span>({
+        <span style="color:#a6e22e">url</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;https://the-cloud/api/v1/storage/my-bucket&#39;</span>,
+        <span style="color:#e6db74">&#39;POST&#39;</span>,
+        <span style="color:#a6e22e">headers</span><span style="color:#f92672">:</span> {
+            <span style="color:#a6e22e">Authorization</span><span style="color:#f92672">:</span> <span style="color:#e6db74">`Bearer </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">authToken</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>
+        },
+        <span style="color:#a6e22e">data</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">productionFile</span>,
+        <span style="color:#a6e22e">validateStatus</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">false</span>
+    });
+    <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">productionFileResponse</span>.<span style="color:#a6e22e">status</span> <span style="color:#f92672">!==</span> <span style="color:#ae81ff">200</span>) {
+        <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> Error(<span style="color:#e6db74">`HTTP request failed: </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">productionFileResponse</span>.<span style="color:#a6e22e">status</span><span style="color:#e6db74">}</span><span style="color:#e6db74"> </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">productionFileResponse</span>.<span style="color:#a6e22e">data</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>)
+    }
+    <span style="color:#75715e">// create staging certificate/key file contents (axios will JSON stringify the JavaScript object for us)
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">encodedCertificateStaging</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">Buffer</span>.<span style="color:#a6e22e">from</span>(<span style="color:#a6e22e">data</span>).<span style="color:#a6e22e">toString</span>(<span style="color:#e6db74">&#39;certificate for staging environment&#39;</span>);
+    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">encodedKeyStaging</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">Buffer</span>.<span style="color:#a6e22e">from</span>(<span style="color:#a6e22e">data</span>).<span style="color:#a6e22e">toString</span>(<span style="color:#e6db74">&#39;key for staging environment&#39;</span>);
+    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">stagingFile</span> <span style="color:#f92672">=</span> {
+        <span style="color:#a6e22e">description</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;Staging certificate/key&#39;</span>,
+        <span style="color:#a6e22e">name</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;staging_file&#39;</span>,
+        <span style="color:#a6e22e">certificate</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">encodedCertificateStaging</span>,
+        <span style="color:#a6e22e">key</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">encodedKeyStaging</span>,
+        <span style="color:#a6e22e">metadata</span><span style="color:#f92672">:</span> {
+            <span style="color:#a6e22e">env</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;staging&#39;</span>
+        }
+    };
+    <span style="color:#75715e">// upload staging certificate/key file contents (uses name in HTTP body to create a file under &#34;my-bucket&#34;)
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">stagingFileResponse</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">axios</span>({
+        <span style="color:#a6e22e">url</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;https://the-cloud/api/v1/storage/my-bucket&#39;</span>,
+        <span style="color:#e6db74">&#39;POST&#39;</span>,
+        <span style="color:#a6e22e">headers</span><span style="color:#f92672">:</span> {
+            <span style="color:#a6e22e">Authorization</span><span style="color:#f92672">:</span> <span style="color:#e6db74">`Bearer </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">authToken</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>
+        },
+        <span style="color:#a6e22e">data</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">stagingFile</span>,
+        <span style="color:#a6e22e">validateStatus</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">false</span>
+    });
+    <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">stagingFileResponse</span>.<span style="color:#a6e22e">status</span> <span style="color:#f92672">!==</span> <span style="color:#ae81ff">200</span>) {
+        <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> Error(<span style="color:#e6db74">`HTTP request failed: </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">stagingFileResponse</span>.<span style="color:#a6e22e">status</span><span style="color:#e6db74">}</span><span style="color:#e6db74"> </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">stagingFileResponse</span>.<span style="color:#a6e22e">data</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>)
+    }
+}
+
+<span style="color:#66d9ef">await</span> <span style="color:#a6e22e">uploadFiles</span>();
+</code></pre></div><h3 id="duplication">Duplication</h3>
+<p>Ok, that is a little better… at least it is easier to understand what is happening.  But the function is still large and there are blocks of code that are almost exactly the same so let&rsquo;s extract those into some helper methods.</p>
+<p>Actions to take: 1) Create <code>_generateFile</code> function and use it in <code>uploadFiles</code> for both environments 2) Create <code>_uploadFile</code> function and use it in <code>uploadFiles</code> for both environments</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">axios</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#39;axios&#39;</span>);
+
+<span style="color:#66d9ef">function</span> <span style="color:#a6e22e">uploadFiles</span>() {
+    <span style="color:#75715e">// login to &#34;the cloud&#34; and get a token
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">loginResponse</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">axios</span>({
+        <span style="color:#a6e22e">url</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;https://the-cloud/api/v1/login&#39;</span>,
+        <span style="color:#e6db74">&#39;GET&#39;</span>,
+        <span style="color:#a6e22e">auth</span><span style="color:#f92672">:</span> {
+            <span style="color:#a6e22e">username</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;a_username&#39;</span>,
+            <span style="color:#a6e22e">password</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;a_password&#39;</span>
+        },
+        <span style="color:#a6e22e">validateStatus</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">false</span>
+    });
+    <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">loginResponse</span>.<span style="color:#a6e22e">status</span> <span style="color:#f92672">!==</span> <span style="color:#ae81ff">200</span>) {
+        <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> Error(<span style="color:#e6db74">`HTTP request failed: </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">loginResponse</span>.<span style="color:#a6e22e">status</span><span style="color:#e6db74">}</span><span style="color:#e6db74"> </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">loginResponse</span>.<span style="color:#a6e22e">data</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>)
+    }
+    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">authToken</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">loginResponse</span>.<span style="color:#a6e22e">data</span>.<span style="color:#a6e22e">token</span>;
+    <span style="color:#75715e">// create production certificate/key file contents (axios will JSON stringify the JavaScript object for us)
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">productionFile</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">_</span><span style="color:#a6e22e">generateFile</span>(<span style="color:#e6db74">&#39;production&#39;</span>, <span style="color:#e6db74">&#39;certificate for production environment&#39;</span>, <span style="color:#e6db74">&#39;key for production environment&#39;</span>);
+    <span style="color:#75715e">// upload production certificate/key file contents (uses name in HTTP body to create a file under &#34;my-bucket&#34;)
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">await</span> <span style="color:#ae81ff">_</span><span style="color:#a6e22e">uploadFile</span>(<span style="color:#a6e22e">authToken</span>, <span style="color:#a6e22e">productionFile</span>);
+    <span style="color:#75715e">// create staging certificate/key file contents (axios will JSON stringify the JavaScript object for us)
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">stagingFile</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">_</span><span style="color:#a6e22e">generateFile</span>(<span style="color:#e6db74">&#39;staging&#39;</span>, <span style="color:#e6db74">&#39;certificate for staging environment&#39;</span>, <span style="color:#e6db74">&#39;key for staging environment&#39;</span>);
+    <span style="color:#75715e">// upload staging certificate/key file contents (uses name in HTTP body to create a file under &#34;my-bucket&#34;)
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">await</span> <span style="color:#ae81ff">_</span><span style="color:#a6e22e">uploadFile</span>(<span style="color:#a6e22e">authToken</span>, <span style="color:#a6e22e">stagingFile</span>);
+}
+
+<span style="color:#66d9ef">function</span> <span style="color:#ae81ff">_</span><span style="color:#a6e22e">generateFile</span>(<span style="color:#a6e22e">environment</span>, <span style="color:#a6e22e">certificate</span>, <span style="color:#a6e22e">key</span>) {
+    <span style="color:#66d9ef">return</span> <span style="color:#f92672">=</span> {
+        <span style="color:#a6e22e">description</span><span style="color:#f92672">:</span> <span style="color:#e6db74">`</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">environment</span><span style="color:#e6db74">}</span><span style="color:#e6db74"> certificate/key`</span>,
+        <span style="color:#a6e22e">name</span><span style="color:#f92672">:</span> <span style="color:#e6db74">`</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">environment</span><span style="color:#e6db74">}</span><span style="color:#e6db74">_file`</span>,
+        <span style="color:#a6e22e">certificate</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">Buffer</span>.<span style="color:#a6e22e">from</span>(<span style="color:#a6e22e">data</span>).<span style="color:#a6e22e">toString</span>(<span style="color:#a6e22e">certificate</span>),
+        <span style="color:#a6e22e">key</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">Buffer</span>.<span style="color:#a6e22e">from</span>(<span style="color:#a6e22e">data</span>).<span style="color:#a6e22e">toString</span>(<span style="color:#a6e22e">key</span>),
+        <span style="color:#a6e22e">metadata</span><span style="color:#f92672">:</span> {
+            <span style="color:#a6e22e">env</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">environment</span>
+        }
+    };
+}
+
+<span style="color:#66d9ef">async</span> <span style="color:#66d9ef">function</span> <span style="color:#ae81ff">_</span><span style="color:#a6e22e">uploadFile</span>(<span style="color:#a6e22e">authToken</span>, <span style="color:#a6e22e">file</span>) {
+    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">response</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">axios</span>({
+        <span style="color:#a6e22e">url</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;https://the-cloud/api/v1/storage/my-bucket&#39;</span>,
+        <span style="color:#e6db74">&#39;POST&#39;</span>,
+        <span style="color:#a6e22e">headers</span><span style="color:#f92672">:</span> {
+            <span style="color:#a6e22e">Authorization</span><span style="color:#f92672">:</span> <span style="color:#e6db74">`Bearer </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">authToken</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>
+        },
+        <span style="color:#a6e22e">data</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">file</span>,
+        <span style="color:#a6e22e">validateStatus</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">false</span>
+    });
+    <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">response</span>.<span style="color:#a6e22e">status</span> <span style="color:#f92672">!==</span> <span style="color:#ae81ff">200</span>) {
+        <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> Error(<span style="color:#e6db74">`HTTP request failed: </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">response</span>.<span style="color:#a6e22e">status</span><span style="color:#e6db74">}</span><span style="color:#e6db74"> </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">response</span>.<span style="color:#a6e22e">data</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>)
+    }
+    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">response</span>.<span style="color:#a6e22e">data</span>;
+}
+
+<span style="color:#66d9ef">await</span> <span style="color:#a6e22e">uploadFiles</span>();
+</code></pre></div><h3 id="extract-functionality">Extract functionality</h3>
+<p>Now <code>uploadFiles</code> is starting to look pretty good, but just because code is not duplicated does not mean it shouldn&rsquo;t be extracted.  If there is a block of code that makes sense to extract out, do it.</p>
+<p>Actions To Take: 1) Extract out <code>login</code> functionality and use it in <code>uploadFiles</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">axios</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#39;axios&#39;</span>);
+
+<span style="color:#66d9ef">function</span> <span style="color:#a6e22e">uploadFiles</span>() {
+    <span style="color:#75715e">// login to &#34;the cloud&#34; and get a token
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">authToken</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">await</span> <span style="color:#ae81ff">_</span><span style="color:#a6e22e">login</span>(<span style="color:#e6db74">&#39;a_username&#39;</span>, <span style="color:#e6db74">&#39;a_password&#39;</span>);
+    <span style="color:#75715e">// create production certificate/key file contents (axios will JSON stringify the JavaScript object for us)
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">// upload production certificate/key file contents (uses name in HTTP body to create a file under &#34;my-bucket&#34;)
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">await</span> <span style="color:#ae81ff">_</span><span style="color:#a6e22e">generateAndUploadFile</span>(<span style="color:#a6e22e">authToken</span>, <span style="color:#e6db74">&#39;production&#39;</span>, <span style="color:#e6db74">&#39;certificate for production environment&#39;</span>, <span style="color:#e6db74">&#39;key for production environment&#39;</span>)
+    <span style="color:#75715e">// create staging certificate/key file contents (axios will JSON stringify the JavaScript object for us)
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">// upload staging certificate/key file contents (uses name in HTTP body to create a file under &#34;my-bucket&#34;)
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">await</span> <span style="color:#ae81ff">_</span><span style="color:#a6e22e">generateAndUploadFile</span>(<span style="color:#a6e22e">authToken</span>, <span style="color:#e6db74">&#39;staging&#39;</span>, <span style="color:#e6db74">&#39;certificate for staging environment&#39;</span>, <span style="color:#e6db74">&#39;key for staging environment&#39;</span>)
+}
+
+<span style="color:#66d9ef">async</span> <span style="color:#66d9ef">function</span> <span style="color:#ae81ff">_</span><span style="color:#a6e22e">generateAndUploadFile</span>(<span style="color:#a6e22e">authToken</span>, <span style="color:#a6e22e">environment</span>, <span style="color:#a6e22e">certificate</span>, <span style="color:#a6e22e">key</span>) {
+    <span style="color:#66d9ef">await</span> <span style="color:#ae81ff">_</span><span style="color:#a6e22e">uploadFile</span>(<span style="color:#a6e22e">authToken</span>, <span style="color:#ae81ff">_</span><span style="color:#a6e22e">generateFile</span>(<span style="color:#a6e22e">environment</span>, <span style="color:#a6e22e">certificate</span>, <span style="color:#a6e22e">key</span>));
+}
+
+<span style="color:#66d9ef">function</span> <span style="color:#ae81ff">_</span><span style="color:#a6e22e">generateFile</span>(<span style="color:#a6e22e">environment</span>, <span style="color:#a6e22e">certificate</span>, <span style="color:#a6e22e">key</span>) {
+    <span style="color:#66d9ef">return</span> <span style="color:#f92672">=</span> {
+        <span style="color:#a6e22e">description</span><span style="color:#f92672">:</span> <span style="color:#e6db74">`</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">environment</span><span style="color:#e6db74">}</span><span style="color:#e6db74"> certificate/key`</span>,
+        <span style="color:#a6e22e">name</span><span style="color:#f92672">:</span> <span style="color:#e6db74">`</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">environment</span><span style="color:#e6db74">}</span><span style="color:#e6db74">_file`</span>,
+        <span style="color:#a6e22e">certificate</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">Buffer</span>.<span style="color:#a6e22e">from</span>(<span style="color:#a6e22e">data</span>).<span style="color:#a6e22e">toString</span>(<span style="color:#a6e22e">certificate</span>),
+        <span style="color:#a6e22e">key</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">Buffer</span>.<span style="color:#a6e22e">from</span>(<span style="color:#a6e22e">data</span>).<span style="color:#a6e22e">toString</span>(<span style="color:#a6e22e">key</span>),
+        <span style="color:#a6e22e">metadata</span><span style="color:#f92672">:</span> {
+            <span style="color:#a6e22e">env</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">environment</span>
+        }
+    };
+}
+
+<span style="color:#66d9ef">async</span> <span style="color:#66d9ef">function</span> <span style="color:#ae81ff">_</span><span style="color:#a6e22e">login</span>(<span style="color:#a6e22e">username</span>, <span style="color:#a6e22e">password</span>) {
+    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">loginResponse</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">axios</span>({
+        <span style="color:#a6e22e">url</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;https://the-cloud/api/v1/login&#39;</span>,
+        <span style="color:#e6db74">&#39;GET&#39;</span>,
+        <span style="color:#a6e22e">auth</span><span style="color:#f92672">:</span> {
+            <span style="color:#a6e22e">username</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">username</span>,
+            <span style="color:#a6e22e">password</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">password</span>
+        },
+        <span style="color:#a6e22e">validateStatus</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">false</span>
+    });
+    <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">loginResponse</span>.<span style="color:#a6e22e">status</span> <span style="color:#f92672">!==</span> <span style="color:#ae81ff">200</span>) {
+        <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> Error(<span style="color:#e6db74">`HTTP request failed: </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">loginResponse</span>.<span style="color:#a6e22e">status</span><span style="color:#e6db74">}</span><span style="color:#e6db74"> </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">loginResponse</span>.<span style="color:#a6e22e">data</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>)
+    }
+    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">response</span>.<span style="color:#a6e22e">data</span>.<span style="color:#a6e22e">token</span>;
+}
+
+<span style="color:#66d9ef">async</span> <span style="color:#66d9ef">function</span> <span style="color:#ae81ff">_</span><span style="color:#a6e22e">uploadFile</span>(<span style="color:#a6e22e">authToken</span>, <span style="color:#a6e22e">file</span>) {
+    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">response</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">axios</span>({
+        <span style="color:#a6e22e">url</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;https://the-cloud/api/v1/storage/my-bucket&#39;</span>,
+        <span style="color:#e6db74">&#39;POST&#39;</span>,
+        <span style="color:#a6e22e">headers</span><span style="color:#f92672">:</span> {
+            <span style="color:#a6e22e">Authorization</span><span style="color:#f92672">:</span> <span style="color:#e6db74">`Bearer </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">authToken</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>
+        },
+        <span style="color:#a6e22e">data</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">file</span>,
+        <span style="color:#a6e22e">validateStatus</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">false</span>
+    });
+    <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">response</span>.<span style="color:#a6e22e">status</span> <span style="color:#f92672">!==</span> <span style="color:#ae81ff">200</span>) {
+        <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> Error(<span style="color:#e6db74">`HTTP request failed: </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">response</span>.<span style="color:#a6e22e">status</span><span style="color:#e6db74">}</span><span style="color:#e6db74"> </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">response</span>.<span style="color:#a6e22e">data</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>)
+    }
+    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">response</span>.<span style="color:#a6e22e">data</span>;
+}
+
+<span style="color:#66d9ef">await</span> <span style="color:#a6e22e">uploadFiles</span>();
+</code></pre></div><h3 id="magic-strings">Magic strings</h3>
+<p>Avoid <a href="https://en.wikipedia.org/wiki/Magic_string">magic strings</a>, there are a number of them still.  In this refactoring example we will not delve into how some of these items (username, password, certificate/key content, etc.) should probably be provided as input or loaded from the environment, but let&rsquo;s at least not sprinkle them throughout the code.</p>
+<p>Actions to take: 1) Move magic strings to the top of the module and update references</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">axios</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#39;axios&#39;</span>);
+
+<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">CLOUD_SERVICE_API</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;https://the-cloud/api/v1&#39;</span>;
+<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">USERNAME</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;a_username&#39;</span>;
+<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">PASSWORD</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;a_password&#39;</span>;
+<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">TLS_CONTENT</span> <span style="color:#f92672">=</span> {
+    <span style="color:#e6db74">&#39;production&#39;</span><span style="color:#f92672">:</span> {
+        <span style="color:#a6e22e">certificate</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;certificate for production environment&#39;</span>,
+        <span style="color:#a6e22e">key</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;key for production environment&#39;</span>
+    },
+    <span style="color:#e6db74">&#39;staging&#39;</span><span style="color:#f92672">:</span> {
+        <span style="color:#a6e22e">certificate</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;certificate for staging environment&#39;</span>,
+        <span style="color:#a6e22e">key</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;key for staging environment&#39;</span>
+    }
+}
+<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">HTTP_RESPONSE_CODES</span> <span style="color:#f92672">=</span> {
+    <span style="color:#a6e22e">SUCCESS</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">200</span>
+}
+
+<span style="color:#66d9ef">function</span> <span style="color:#a6e22e">uploadFiles</span>() {
+    <span style="color:#75715e">// login to &#34;the cloud&#34; and get a token
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">authToken</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">await</span> <span style="color:#ae81ff">_</span><span style="color:#a6e22e">login</span>(<span style="color:#a6e22e">USERNAME</span>, <span style="color:#a6e22e">PASSWORD</span>);
+    <span style="color:#75715e">// create production certificate/key file contents (axios will JSON stringify the JavaScript object for us)
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">// upload production certificate/key file contents (uses name in HTTP body to create a file under &#34;my-bucket&#34;)
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">await</span> <span style="color:#ae81ff">_</span><span style="color:#a6e22e">generateAndUploadFile</span>(<span style="color:#a6e22e">authToken</span>, <span style="color:#e6db74">&#39;production&#39;</span>, <span style="color:#a6e22e">TLS_CONTENT</span>[<span style="color:#e6db74">&#39;production&#39;</span>].<span style="color:#a6e22e">certificate</span>, <span style="color:#a6e22e">TLS_CONTENT</span>[<span style="color:#e6db74">&#39;production&#39;</span>].<span style="color:#a6e22e">key</span>)
+    <span style="color:#75715e">// create staging certificate/key file contents (axios will JSON stringify the JavaScript object for us)
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">// upload staging certificate/key file contents (uses name in HTTP body to create a file under &#34;my-bucket&#34;)
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">await</span> <span style="color:#ae81ff">_</span><span style="color:#a6e22e">generateAndUploadFile</span>(<span style="color:#a6e22e">authToken</span>, <span style="color:#e6db74">&#39;staging&#39;</span>, <span style="color:#a6e22e">TLS_CONTENT</span>[<span style="color:#e6db74">&#39;staging&#39;</span>].<span style="color:#a6e22e">certificate</span>, <span style="color:#a6e22e">TLS_CONTENT</span>[<span style="color:#e6db74">&#39;staging&#39;</span>].<span style="color:#a6e22e">key</span>)
+}
+
+<span style="color:#66d9ef">async</span> <span style="color:#66d9ef">function</span> <span style="color:#ae81ff">_</span><span style="color:#a6e22e">generateAndUploadFile</span>(<span style="color:#a6e22e">authToken</span>, <span style="color:#a6e22e">environment</span>, <span style="color:#a6e22e">certificate</span>, <span style="color:#a6e22e">key</span>) {
+    <span style="color:#66d9ef">await</span> <span style="color:#ae81ff">_</span><span style="color:#a6e22e">uploadFile</span>(<span style="color:#a6e22e">authToken</span>, <span style="color:#ae81ff">_</span><span style="color:#a6e22e">generateFile</span>(<span style="color:#a6e22e">environment</span>, <span style="color:#a6e22e">certificate</span>, <span style="color:#a6e22e">key</span>));
+}
+
+<span style="color:#66d9ef">function</span> <span style="color:#ae81ff">_</span><span style="color:#a6e22e">generateFile</span>(<span style="color:#a6e22e">environment</span>, <span style="color:#a6e22e">certificate</span>, <span style="color:#a6e22e">key</span>) {
+    <span style="color:#66d9ef">return</span> <span style="color:#f92672">=</span> {
+        <span style="color:#a6e22e">description</span><span style="color:#f92672">:</span> <span style="color:#e6db74">`</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">environment</span><span style="color:#e6db74">}</span><span style="color:#e6db74"> certificate/key`</span>,
+        <span style="color:#a6e22e">name</span><span style="color:#f92672">:</span> <span style="color:#e6db74">`</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">environment</span><span style="color:#e6db74">}</span><span style="color:#e6db74">_file`</span>,
+        <span style="color:#a6e22e">certificate</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">Buffer</span>.<span style="color:#a6e22e">from</span>(<span style="color:#a6e22e">data</span>).<span style="color:#a6e22e">toString</span>(<span style="color:#a6e22e">certificate</span>),
+        <span style="color:#a6e22e">key</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">Buffer</span>.<span style="color:#a6e22e">from</span>(<span style="color:#a6e22e">data</span>).<span style="color:#a6e22e">toString</span>(<span style="color:#a6e22e">key</span>),
+        <span style="color:#a6e22e">metadata</span><span style="color:#f92672">:</span> {
+            <span style="color:#a6e22e">env</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">environment</span>
+        }
+    };
+}
+
+<span style="color:#66d9ef">async</span> <span style="color:#66d9ef">function</span> <span style="color:#ae81ff">_</span><span style="color:#a6e22e">login</span>(<span style="color:#a6e22e">username</span>, <span style="color:#a6e22e">password</span>) {
+    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">loginResponse</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">axios</span>({
+        <span style="color:#a6e22e">url</span><span style="color:#f92672">:</span> <span style="color:#e6db74">`</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">CLOUD_SERVICE_API</span><span style="color:#e6db74">}</span><span style="color:#e6db74">/login`</span>,
+        <span style="color:#e6db74">&#39;GET&#39;</span>,
+        <span style="color:#a6e22e">auth</span><span style="color:#f92672">:</span> {
+            <span style="color:#a6e22e">username</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">username</span>,
+            <span style="color:#a6e22e">password</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">password</span>
+        },
+        <span style="color:#a6e22e">validateStatus</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">false</span>
+    });
+    <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">loginResponse</span>.<span style="color:#a6e22e">status</span> <span style="color:#f92672">!==</span> <span style="color:#a6e22e">HTTP_RESPONSE_CODES</span>.<span style="color:#a6e22e">SUCCESS</span>) {
+        <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> Error(<span style="color:#e6db74">`HTTP request failed: </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">loginResponse</span>.<span style="color:#a6e22e">status</span><span style="color:#e6db74">}</span><span style="color:#e6db74"> </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">loginResponse</span>.<span style="color:#a6e22e">data</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>)
+    }
+    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">response</span>.<span style="color:#a6e22e">data</span>.<span style="color:#a6e22e">token</span>;
+}
+
+<span style="color:#66d9ef">async</span> <span style="color:#66d9ef">function</span> <span style="color:#ae81ff">_</span><span style="color:#a6e22e">uploadFile</span>(<span style="color:#a6e22e">authToken</span>, <span style="color:#a6e22e">file</span>) {
+    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">response</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">axios</span>({
+        <span style="color:#a6e22e">url</span><span style="color:#f92672">:</span> <span style="color:#e6db74">`</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">CLOUD_SERVICE_API</span><span style="color:#e6db74">}</span><span style="color:#e6db74">/storage/my-bucket`</span>,
+        <span style="color:#e6db74">&#39;POST&#39;</span>,
+        <span style="color:#a6e22e">headers</span><span style="color:#f92672">:</span> {
+            <span style="color:#a6e22e">Authorization</span><span style="color:#f92672">:</span> <span style="color:#e6db74">`Bearer </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">authToken</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>
+        },
+        <span style="color:#a6e22e">data</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">file</span>,
+        <span style="color:#a6e22e">validateStatus</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">false</span>
+    });
+    <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">response</span>.<span style="color:#a6e22e">status</span> <span style="color:#f92672">!==</span> <span style="color:#a6e22e">HTTP_RESPONSE_CODES</span>.<span style="color:#a6e22e">SUCCESS</span>) {
+        <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> Error(<span style="color:#e6db74">`HTTP request failed: </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">response</span>.<span style="color:#a6e22e">status</span><span style="color:#e6db74">}</span><span style="color:#e6db74"> </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">response</span>.<span style="color:#a6e22e">data</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>)
+    }
+    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">response</span>.<span style="color:#a6e22e">data</span>;
+}
+
+<span style="color:#66d9ef">await</span> <span style="color:#a6e22e">uploadFiles</span>();
+</code></pre></div><h3 id="remove-unnecessary-comments">Remove unnecessary comments</h3>
+<p>Well now those comments are starting to look a little silly, the methods are named well enough to allow readers to understand what is going on without them.  Let&rsquo;s just remove the comments.</p>
+<p>Actions to take: 1) Remove unnecessary comments</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">axios</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#39;axios&#39;</span>);
+
+<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">CLOUD_SERVICE_API</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;https://the-cloud/api/v1&#39;</span>;
+<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">USERNAME</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;a_username&#39;</span>;
+<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">PASSWORD</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;a_password&#39;</span>;
+<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">TLS_CONTENT</span> <span style="color:#f92672">=</span> {
+    <span style="color:#e6db74">&#39;production&#39;</span><span style="color:#f92672">:</span> {
+        <span style="color:#a6e22e">certificate</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;certificate for production environment&#39;</span>,
+        <span style="color:#a6e22e">key</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;key for production environment&#39;</span>
+    },
+    <span style="color:#e6db74">&#39;staging&#39;</span><span style="color:#f92672">:</span> {
+        <span style="color:#a6e22e">certificate</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;certificate for staging environment&#39;</span>,
+        <span style="color:#a6e22e">key</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;key for staging environment&#39;</span>
+    }
+}
+<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">HTTP_RESPONSE_CODES</span> <span style="color:#f92672">=</span> {
+    <span style="color:#a6e22e">SUCCESS</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">200</span>
+}
+
+<span style="color:#66d9ef">function</span> <span style="color:#a6e22e">uploadFiles</span>() {
+    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">authToken</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">await</span> <span style="color:#ae81ff">_</span><span style="color:#a6e22e">login</span>(<span style="color:#a6e22e">USERNAME</span>, <span style="color:#a6e22e">PASSWORD</span>);
+    <span style="color:#66d9ef">await</span> <span style="color:#ae81ff">_</span><span style="color:#a6e22e">generateAndUploadFile</span>(<span style="color:#a6e22e">authToken</span>, <span style="color:#e6db74">&#39;production&#39;</span>, <span style="color:#a6e22e">TLS_CONTENT</span>[<span style="color:#e6db74">&#39;production&#39;</span>].<span style="color:#a6e22e">certificate</span>, <span style="color:#a6e22e">TLS_CONTENT</span>[<span style="color:#e6db74">&#39;production&#39;</span>].<span style="color:#a6e22e">key</span>)
+    <span style="color:#66d9ef">await</span> <span style="color:#ae81ff">_</span><span style="color:#a6e22e">generateAndUploadFile</span>(<span style="color:#a6e22e">authToken</span>, <span style="color:#e6db74">&#39;staging&#39;</span>, <span style="color:#a6e22e">TLS_CONTENT</span>[<span style="color:#e6db74">&#39;staging&#39;</span>].<span style="color:#a6e22e">certificate</span>, <span style="color:#a6e22e">TLS_CONTENT</span>[<span style="color:#e6db74">&#39;staging&#39;</span>].<span style="color:#a6e22e">key</span>)
+}
+
+<span style="color:#66d9ef">async</span> <span style="color:#66d9ef">function</span> <span style="color:#ae81ff">_</span><span style="color:#a6e22e">generateAndUploadFile</span>(<span style="color:#a6e22e">authToken</span>, <span style="color:#a6e22e">environment</span>, <span style="color:#a6e22e">certificate</span>, <span style="color:#a6e22e">key</span>) {
+    <span style="color:#66d9ef">await</span> <span style="color:#ae81ff">_</span><span style="color:#a6e22e">uploadFile</span>(<span style="color:#a6e22e">authToken</span>, <span style="color:#ae81ff">_</span><span style="color:#a6e22e">generateFile</span>(<span style="color:#a6e22e">environment</span>, <span style="color:#a6e22e">certificate</span>, <span style="color:#a6e22e">key</span>));
+}
+
+<span style="color:#66d9ef">function</span> <span style="color:#ae81ff">_</span><span style="color:#a6e22e">generateFile</span>(<span style="color:#a6e22e">environment</span>, <span style="color:#a6e22e">certificate</span>, <span style="color:#a6e22e">key</span>) {
+    <span style="color:#66d9ef">return</span> <span style="color:#f92672">=</span> {
+        <span style="color:#a6e22e">description</span><span style="color:#f92672">:</span> <span style="color:#e6db74">`</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">environment</span><span style="color:#e6db74">}</span><span style="color:#e6db74"> certificate/key`</span>,
+        <span style="color:#a6e22e">name</span><span style="color:#f92672">:</span> <span style="color:#e6db74">`</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">environment</span><span style="color:#e6db74">}</span><span style="color:#e6db74">_file`</span>,
+        <span style="color:#a6e22e">certificate</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">Buffer</span>.<span style="color:#a6e22e">from</span>(<span style="color:#a6e22e">data</span>).<span style="color:#a6e22e">toString</span>(<span style="color:#a6e22e">certificate</span>),
+        <span style="color:#a6e22e">key</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">Buffer</span>.<span style="color:#a6e22e">from</span>(<span style="color:#a6e22e">data</span>).<span style="color:#a6e22e">toString</span>(<span style="color:#a6e22e">key</span>),
+        <span style="color:#a6e22e">metadata</span><span style="color:#f92672">:</span> {
+            <span style="color:#a6e22e">env</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">environment</span>
+        }
+    };
+}
+
+<span style="color:#66d9ef">async</span> <span style="color:#66d9ef">function</span> <span style="color:#ae81ff">_</span><span style="color:#a6e22e">login</span>(<span style="color:#a6e22e">username</span>, <span style="color:#a6e22e">password</span>) {
+    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">loginResponse</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">axios</span>({
+        <span style="color:#a6e22e">url</span><span style="color:#f92672">:</span> <span style="color:#e6db74">`</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">CLOUD_SERVICE_API</span><span style="color:#e6db74">}</span><span style="color:#e6db74">/login`</span>,
+        <span style="color:#e6db74">&#39;GET&#39;</span>,
+        <span style="color:#a6e22e">auth</span><span style="color:#f92672">:</span> {
+            <span style="color:#a6e22e">username</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">username</span>,
+            <span style="color:#a6e22e">password</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">password</span>
+        },
+        <span style="color:#a6e22e">validateStatus</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">false</span>
+    });
+    <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">loginResponse</span>.<span style="color:#a6e22e">status</span> <span style="color:#f92672">!==</span> <span style="color:#a6e22e">HTTP_RESPONSE_CODES</span>.<span style="color:#a6e22e">SUCCESS</span>) {
+        <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> Error(<span style="color:#e6db74">`HTTP request failed: </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">loginResponse</span>.<span style="color:#a6e22e">status</span><span style="color:#e6db74">}</span><span style="color:#e6db74"> </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">loginResponse</span>.<span style="color:#a6e22e">data</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>)
+    }
+    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">response</span>.<span style="color:#a6e22e">data</span>.<span style="color:#a6e22e">token</span>;
+}
+
+<span style="color:#66d9ef">async</span> <span style="color:#66d9ef">function</span> <span style="color:#ae81ff">_</span><span style="color:#a6e22e">uploadFile</span>(<span style="color:#a6e22e">authToken</span>, <span style="color:#a6e22e">file</span>) {
+    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">response</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">axios</span>({
+        <span style="color:#a6e22e">url</span><span style="color:#f92672">:</span> <span style="color:#e6db74">`</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">CLOUD_SERVICE_API</span><span style="color:#e6db74">}</span><span style="color:#e6db74">/storage/my-bucket`</span>,
+        <span style="color:#e6db74">&#39;POST&#39;</span>,
+        <span style="color:#a6e22e">headers</span><span style="color:#f92672">:</span> {
+            <span style="color:#a6e22e">Authorization</span><span style="color:#f92672">:</span> <span style="color:#e6db74">`Bearer </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">authToken</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>
+        },
+        <span style="color:#a6e22e">data</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">file</span>,
+        <span style="color:#a6e22e">validateStatus</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">false</span>
+    });
+    <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">response</span>.<span style="color:#a6e22e">status</span> <span style="color:#f92672">!==</span> <span style="color:#a6e22e">HTTP_RESPONSE_CODES</span>.<span style="color:#a6e22e">SUCCESS</span>) {
+        <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> Error(<span style="color:#e6db74">`HTTP request failed: </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">response</span>.<span style="color:#a6e22e">status</span><span style="color:#e6db74">}</span><span style="color:#e6db74"> </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">response</span>.<span style="color:#a6e22e">data</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>)
+    }
+    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">response</span>.<span style="color:#a6e22e">data</span>;
+}
+
+<span style="color:#66d9ef">await</span> <span style="color:#a6e22e">uploadFiles</span>();
+</code></pre></div><h2 id="futher-optimizations">Futher optimizations</h2>
+<p>There is more that can be done to this code of course, such as 1) moving the low level cloud service API interaction to a <code>CloudApiClient</code> class to encapsulate that functionality (and allow support via polymorphism for another cloud) 2) creating a <code>FilesClient</code> class to encapsulate cloud service file operation behavior 3) wrapping the top level certificate and key upload business logic into a class which handles loading the files from the environment and calling the other classes 4) and so on…</p>
+<script src="https://unpkg.com/mermaid@8.5.1/dist/mermaid.min.js"></script>
+
+<script>
+    mermaid.initialize({ 
+        theme: 'dark',
+        maxWidth: true
+    });
+</script>
+
+<pre class="mermaid" align="center">
+classDiagram
+    class CloudApiClient{
+        +login()
+        +makeRequest()
+    }
+    class FilesClient{
+        +init()
+        +uploadFile()
+    }
+    class CertificateAndKeyUploader{
+        +uploadFiles()
+    }
+    CertificateAndKeyUploader ..> FilesClient
+    FilesClient ..> CloudApiClient
+</pre>
+<p>but this at least covers the broad strokes of what refactoring a module might look like.</p>
+<h2 id="additional-resources">Additional Resources</h2>
+<p>I find that once you have a foundational understanding of code refactoring, you simply need to excercise that knowledge over time to get better… but to get a refresher on specific principles you can go to the wonderful site <a href="https://refactoring.com">refactoring.com</a> and check out the <a href="https://refactoring.com/catalog/">catalog</a>.  I also highly recommend, when the time is right, to find and spend the time to watch the &ldquo;Uncle Bob&rdquo; Clean Code <a href="https://www.youtube.com/watch?v=7EmboKQH8lM">series</a> where he goes into detail about the topics covered in his book.</p>
+<ul class="pa0">
+  
+</ul>
+<div class="mt6 instapaper_ignoref">
+      
+      
+      </div>
+    </div>
+
+    <aside class="w-30-l mt6-l">
+
+
+
+
+</aside>
+
+  </article>
+
+    </main>
+    <footer class="bg-dark-gray bottom-0 w-100 pa3" role="contentinfo">
+  <div class="flex justify-between">
+  <a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href="https://jsevedge.github.io" >
+    &copy;  James Sevedge 2021 
+  </a>
+    <div>
+
+
+
+
+
+
+<a href="http://linkedin.com/in/james-sevedge/" target="_blank" class="link-transition linkedin link dib z-999 pt3 pt0-l mr1" title="LinkedIn link" rel="noopener" aria-label="follow on LinkedIn——Opens in a new window">
+  <svg  height="32px"  style="enable-background:new 0 0 65 65;" version="1.1" viewBox="0 0 65 65" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <path d="M50.837,48.137V36.425c0-6.275-3.35-9.195-7.816-9.195  c-3.604,0-5.219,1.983-6.119,3.374V27.71h-6.79c0.09,1.917,0,20.427,0,20.427h6.79V36.729c0-0.609,0.044-1.219,0.224-1.655  c0.49-1.22,1.607-2.483,3.482-2.483c2.458,0,3.44,1.873,3.44,4.618v10.929H50.837z M22.959,24.922c2.367,0,3.842-1.57,3.842-3.531  c-0.044-2.003-1.475-3.528-3.797-3.528s-3.841,1.524-3.841,3.528c0,1.961,1.474,3.531,3.753,3.531H22.959z M34,64  C17.432,64,4,50.568,4,34C4,17.431,17.432,4,34,4s30,13.431,30,30C64,50.568,50.568,64,34,64z M26.354,48.137V27.71h-6.789v20.427  H26.354z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/>
+</svg>
+
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000" width="8px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/>
+</svg>
+</span></a>
+
+
+<a href="https://github.com/jsevedge" target="_blank" class="link-transition github link dib z-999 pt3 pt0-l mr1" title="Github link" rel="noopener" aria-label="follow on Github——Opens in a new window">
+  <svg  height="32px"  style="enable-background:new 0 0 512 512;" version="1.1" viewBox="0 0 512 512" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+  <path d="M256,32C132.3,32,32,134.8,32,261.7c0,101.5,64.2,187.5,153.2,217.9c11.2,2.1,15.3-5,15.3-11.1   c0-5.5-0.2-19.9-0.3-39.1c-62.3,13.9-75.5-30.8-75.5-30.8c-10.2-26.5-24.9-33.6-24.9-33.6c-20.3-14.3,1.5-14,1.5-14   c22.5,1.6,34.3,23.7,34.3,23.7c20,35.1,52.4,25,65.2,19.1c2-14.8,7.8-25,14.2-30.7c-49.7-5.8-102-25.5-102-113.5   c0-25.1,8.7-45.6,23-61.6c-2.3-5.8-10-29.2,2.2-60.8c0,0,18.8-6.2,61.6,23.5c17.9-5.1,37-7.6,56.1-7.7c19,0.1,38.2,2.6,56.1,7.7   c42.8-29.7,61.5-23.5,61.5-23.5c12.2,31.6,4.5,55,2.2,60.8c14.3,16.1,23,36.6,23,61.6c0,88.2-52.4,107.6-102.3,113.3   c8,7.1,15.2,21.1,15.2,42.5c0,30.7-0.3,55.5-0.3,63c0,6.1,4,13.3,15.4,11C415.9,449.1,480,363.1,480,261.7   C480,134.8,379.7,32,256,32z"/>
+</svg>
+
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000" width="8px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/>
+</svg>
+</span></a>
+
+
+
+
+
+
+</div>
+  </div>
+</footer>
+
+    
+
+  <script src="/dist/js/app.3fc0f988d21662902933.js"></script>
+
+
+  </body>
+</html>

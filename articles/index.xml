@@ -6,7 +6,17 @@
     <description>Recent content in Articles on James Sevedge</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 19 Oct 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://jsevedge.github.io/articles/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 09 Nov 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://jsevedge.github.io/articles/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>An Excercise In Refactoring</title>
+      <link>https://jsevedge.github.io/articles/an-excercise-in-refactoring/</link>
+      <pubDate>Tue, 09 Nov 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://jsevedge.github.io/articles/an-excercise-in-refactoring/</guid>
+      <description>In my humble experience any discussion about refactoring should start with Refactoring (Martin Fowler/Kent Beck) and Clean Code (Robert Martin). Having at least a rudimentary understanding of the design patterns presented in Gang of Four is helpful too.
+It can be daunting to know where exactly to begin with those resources or understand why it matters so let&amp;rsquo;s dive into the following concrete example to provide some clarity on what refactoring a module may look like.</description>
+    </item>
+    
     <item>
       <title>Treat your Career Like a Startup</title>
       <link>https://jsevedge.github.io/articles/career-as-a-startup/</link>
