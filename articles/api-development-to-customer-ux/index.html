@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     
-    <title>Hello World | James Sevedge</title>
+    <title>API Development (Beyond the Specification Document) | James Sevedge</title>
     <meta name="viewport" content="width=device-width,minimum-scale=1">
     <meta name="generator" content="Hugo 0.87.0" />
     
@@ -25,20 +25,20 @@
 
     
     
-    <meta property="og:title" content="Hello World" />
-<meta property="og:description" content="Congratulations for making it to an obscure post on an obscure site, check out some of the other posts for better content!" />
+    <meta property="og:title" content="API Development (Beyond the Specification Document)" />
+<meta property="og:description" content="Creating an API that is well thought out, scales and adopts industry standards can be quite difficult. Creating the API while keeping the end consumer User Experience (UX) at the forefront adds even more cognitive load, however the payoff is worth it to stay disciplined and consider it from the start. Let&rsquo;s talk about what that flow might look like at a high level including some example tooling and processes." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://jsevedge.github.io/post/hello-world/" /><meta property="article:section" content="post" />
+<meta property="og:url" content="https://jsevedge.github.io/articles/api-development-to-customer-ux/" /><meta property="article:section" content="articles" />
 <meta property="article:published_time" content="2020-05-20T00:00:00+00:00" />
 <meta property="article:modified_time" content="2020-05-20T00:00:00+00:00" />
 
-<meta itemprop="name" content="Hello World">
-<meta itemprop="description" content="Congratulations for making it to an obscure post on an obscure site, check out some of the other posts for better content!"><meta itemprop="datePublished" content="2020-05-20T00:00:00+00:00" />
+<meta itemprop="name" content="API Development (Beyond the Specification Document)">
+<meta itemprop="description" content="Creating an API that is well thought out, scales and adopts industry standards can be quite difficult. Creating the API while keeping the end consumer User Experience (UX) at the forefront adds even more cognitive load, however the payoff is worth it to stay disciplined and consider it from the start. Let&rsquo;s talk about what that flow might look like at a high level including some example tooling and processes."><meta itemprop="datePublished" content="2020-05-20T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2020-05-20T00:00:00+00:00" />
-<meta itemprop="wordCount" content="22">
+<meta itemprop="wordCount" content="451">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Hello World"/>
-<meta name="twitter:description" content="Congratulations for making it to an obscure post on an obscure site, check out some of the other posts for better content!"/>
+<meta name="twitter:title" content="API Development (Beyond the Specification Document)"/>
+<meta name="twitter:description" content="Creating an API that is well thought out, scales and adopts industry standards can be quite difficult. Creating the API while keeping the end consumer User Experience (UX) at the forefront adds even more cognitive load, however the payoff is worth it to stay disciplined and consider it from the start. Let&rsquo;s talk about what that flow might look like at a high level including some example tooling and processes."/>
 
       
         
@@ -74,7 +74,7 @@
         <ul class="pl0 mr3">
           
           <li class="list f5 f4-ns fw4 dib pr3">
-            <a class="hover-white no-underline white-90" href="/post/" title="Articles page">
+            <a class="hover-white no-underline white-90" href="/articles/" title="Articles page">
               Articles
             </a>
           </li>
@@ -82,6 +82,12 @@
           <li class="list f5 f4-ns fw4 dib pr3">
             <a class="hover-white no-underline white-90" href="/about/" title="About page">
               About
+            </a>
+          </li>
+          
+          <li class="list f5 f4-ns fw4 dib pr3">
+            <a class="hover-white no-underline white-90" href="/contact/" title="Contact page">
+              Contact
             </a>
           </li>
           
@@ -148,13 +154,13 @@
 
     
     
-    <a href="https://twitter.com/share?url=https://jsevedge.github.io/post/hello-world/&amp;text=Hello%20World" class="twitter no-underline" aria-label="share on Twitter">
+    <a href="https://twitter.com/share?url=https://jsevedge.github.io/articles/api-development-to-customer-ux/&amp;text=API%20Development%20%28Beyond%20the%20Specification%20Document%29" class="twitter no-underline" aria-label="share on Twitter">
       <svg height="32px"  style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M37.167,22.283c-2.619,0.953-4.274,3.411-4.086,6.101  l0.063,1.038l-1.048-0.127c-3.813-0.487-7.145-2.139-9.974-4.915l-1.383-1.377l-0.356,1.017c-0.754,2.267-0.272,4.661,1.299,6.271  c0.838,0.89,0.649,1.017-0.796,0.487c-0.503-0.169-0.943-0.296-0.985-0.233c-0.146,0.149,0.356,2.076,0.754,2.839  c0.545,1.06,1.655,2.097,2.871,2.712l1.027,0.487l-1.215,0.021c-1.173,0-1.215,0.021-1.089,0.467  c0.419,1.377,2.074,2.839,3.918,3.475l1.299,0.444l-1.131,0.678c-1.676,0.976-3.646,1.526-5.616,1.568  C19.775,43.256,19,43.341,19,43.405c0,0.211,2.557,1.397,4.044,1.864c4.463,1.377,9.765,0.783,13.746-1.568  c2.829-1.673,5.657-5,6.978-8.221c0.713-1.716,1.425-4.851,1.425-6.354c0-0.975,0.063-1.102,1.236-2.267  c0.692-0.678,1.341-1.419,1.467-1.631c0.21-0.403,0.188-0.403-0.88-0.043c-1.781,0.636-2.033,0.551-1.152-0.402  c0.649-0.678,1.425-1.907,1.425-2.267c0-0.063-0.314,0.042-0.671,0.233c-0.377,0.212-1.215,0.53-1.844,0.72l-1.131,0.361l-1.027-0.7  c-0.566-0.381-1.361-0.805-1.781-0.932C39.766,21.902,38.131,21.944,37.167,22.283z M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4  s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/></svg>
 
     </a>
 
     
-    <a href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https://jsevedge.github.io/post/hello-world/&amp;title=Hello%20World" class="linkedin no-underline" aria-label="share on LinkedIn">
+    <a href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https://jsevedge.github.io/articles/api-development-to-customer-ux/&amp;title=API%20Development%20%28Beyond%20the%20Specification%20Document%29" class="linkedin no-underline" aria-label="share on LinkedIn">
       <svg  height="32px"  style="enable-background:new 0 0 65 65;" version="1.1" viewBox="0 0 65 65" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
   <path d="M50.837,48.137V36.425c0-6.275-3.35-9.195-7.816-9.195  c-3.604,0-5.219,1.983-6.119,3.374V27.71h-6.79c0.09,1.917,0,20.427,0,20.427h6.79V36.729c0-0.609,0.044-1.219,0.224-1.655  c0.49-1.22,1.607-2.483,3.482-2.483c2.458,0,3.44,1.873,3.44,4.618v10.929H50.837z M22.959,24.922c2.367,0,3.842-1.57,3.842-3.531  c-0.044-2.003-1.475-3.528-3.797-3.528s-3.841,1.524-3.841,3.528c0,1.961,1.474,3.531,3.753,3.531H22.959z M34,64  C17.432,64,4,50.568,4,34C4,17.431,17.432,4,34,4s30,13.431,30,30C64,50.568,50.568,64,34,64z M26.354,48.137V27.71h-6.789v20.427  H26.354z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/>
 </svg>
@@ -163,7 +169,7 @@
   </div>
 
 
-      <h1 class="f1 athelas mt3 mb1">Hello World</h1>
+      <h1 class="f1 athelas mt3 mb1">API Development (Beyond the Specification Document)</h1>
       
       <p class="tracked">
           By <strong>
@@ -179,7 +185,37 @@
       
       
     </header>
-    <div class="nested-copy-line-height lh-copy serif f4 nested-links nested-img mid-gray pr4-l w-two-thirds-l"><p>Congratulations for making it to an obscure post on an obscure site, check out some of the other posts for better content!</p>
+    <div class="nested-copy-line-height lh-copy serif f4 nested-links nested-img mid-gray pr4-l w-two-thirds-l"><p>Creating an API that is well thought out, scales and adopts industry standards can be quite difficult.  Creating the API while keeping the end consumer User Experience (UX) at the forefront adds even more cognitive load, however the payoff is worth it to stay disciplined and consider it from the start.  Let&rsquo;s talk about what that flow might look like at a high level including some example tooling and processes.</p>
+<p>First let&rsquo;s assume you have a good API design in place which has been peer-reviewed and articulated in a human and machine readable format, for example if creating a REST API you may articulate this using <a href="https://openapis.org/">OpenAPI</a>, <a href="https://apiblueprint.org/">API Blueprint</a> or some other similar mechanism.  In this example let&rsquo;s assume you have been using OpenAPI.</p>
+<p>If the OpenAPI specification document describes your API, let&rsquo;s strive to keep it that way.  That is the <em>source of truth</em>.  Given that assumption all consumer UX should be derived from that document.</p>
+<p>Ok great, but my API is already implemented so what more is needed here?  And who is this mysterious &ldquo;consumer&rdquo; that demands more than simply a running instance of the API?</p>
+<p>The most common consumer of API&rsquo;s is other developers trying to make use of your technology platform to accomplish a specific set of tasks which fit into a larger goal.  To enable adoption of the API you must consider a variety of artifacts, including API documentation, hand-crafted examples to describe certain 80/20 usage patterns, multi-language binding SDK bindings and more.</p>
+<p>Before picking any specific tool you need to do research to ensure any tooling selected makes good design sense (more on that later).  One such resource is <a href="https://openapi.tools">https://openapi.tools</a>.  That being said let&rsquo;s take a look at the below UML flow diagram and then map that to a specific tool.</p>
+<script src="https://unpkg.com/mermaid@8.5.1/dist/mermaid.min.js"></script>
+
+<script>
+    mermaid.initialize({ 
+        theme: 'dark',
+        maxWidth: true
+    });
+</script>
+
+<pre class="mermaid" align="center">
+graph TD;
+    api_spec_a["API Specification (Offering A: /service-1)"] --> sdk_tooling;
+    api_spec_b["API Specification (Offering B: /service-1)"] --> sdk_tooling;
+    sdk_tooling["SDK Generation Tooling (Auth, low-level comms, Generator Templates)"] --> sdk_api_docs["SDK API Docs"];
+    sdk_tooling --> sdk_package["SDK Package"];
+    sdk_api_docs --> customer_docs["Consumer Docs"];
+    sdk_package --> package_index["Package Repository"];
+</pre>
+<p>As you can see everything in this diagram flows from the API specification document which should be considered the <em>source of truth</em>, that being said there is still plenty of work and tooling required to get to a polished consumer UX beyond just writing an API specification document.</p>
+<ul>
+<li>API Documentation Generator: <a href="https://github.com/Redocly/redoc">ReDoc</a></li>
+<li>Curated Consumer Documentation: <a href="https://github.com/gohugoio/hugo">Hugo</a></li>
+<li>SDK Generator: <a href="https://github.com/OpenAPITools/openapi-generator">OpenAPI Generator</a></li>
+</ul>
+<p>Thankfully there is open-source tooling which is available for use, you just have to pick a tool for the problem and hope that when you hit a blocker you will have used it and understand it enough to be able to contribute changes back&hellip; easier said than done!</p>
 <ul class="pa0">
   
 </ul>

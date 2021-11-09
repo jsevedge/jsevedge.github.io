@@ -2,22 +2,25 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://jsevedge.github.io/post/</loc>
+    <loc>https://jsevedge.github.io/articles/</loc>
     <lastmod>2021-10-19T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://jsevedge.github.io/</loc>
     <lastmod>2021-10-19T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://jsevedge.github.io/post/career-as-a-startup/</loc>
+    <loc>https://jsevedge.github.io/articles/career-as-a-startup/</loc>
     <lastmod>2021-10-19T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://jsevedge.github.io/about/</loc>
     <lastmod>2020-05-20T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://jsevedge.github.io/post/api-development-to-customer-ux/</loc>
+    <loc>https://jsevedge.github.io/articles/api-development-to-customer-ux/</loc>
     <lastmod>2020-05-20T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://jsevedge.github.io/post/hello-world/</loc>
+    <loc>https://jsevedge.github.io/contact/</loc>
+    <lastmod>2020-05-20T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://jsevedge.github.io/articles/hello-world/</loc>
     <lastmod>2020-05-20T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://jsevedge.github.io/categories/</loc>
