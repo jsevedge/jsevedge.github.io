@@ -2,9 +2,11 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>About on James Sevedge</title>
-    <link>https://jsevedge.github.io/about/</link>
+    <link>https://jamessevedge.com/about/</link>
     <description>Recent content in About on James Sevedge</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language><atom:link href="https://jsevedge.github.io/about/index.xml" rel="self" type="application/rss+xml" />
+    <language>en-us</language>
+    <managingEditor>jjesc1031@gmail.com (James Sevedge)</managingEditor>
+    <webMaster>jjesc1031@gmail.com (James Sevedge)</webMaster><atom:link href="https://jamessevedge.com/about/index.xml" rel="self" type="application/rss+xml" />
   </channel>
 </rss>

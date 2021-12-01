@@ -2,48 +2,547 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Articles on James Sevedge</title>
-    <link>https://jsevedge.github.io/articles/</link>
+    <link>https://jamessevedge.com/articles/</link>
     <description>Recent content in Articles on James Sevedge</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 09 Nov 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://jsevedge.github.io/articles/index.xml" rel="self" type="application/rss+xml" />
+    <managingEditor>jjesc1031@gmail.com (James Sevedge)</managingEditor>
+    <webMaster>jjesc1031@gmail.com (James Sevedge)</webMaster>
+    <lastBuildDate>Tue, 09 Nov 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://jamessevedge.com/articles/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>An Excercise In Refactoring</title>
-      <link>https://jsevedge.github.io/articles/an-excercise-in-refactoring/</link>
+      <link>https://jamessevedge.com/articles/an-excercise-in-refactoring/</link>
       <pubDate>Tue, 09 Nov 2021 00:00:00 +0000</pubDate>
-      
-      <guid>https://jsevedge.github.io/articles/an-excercise-in-refactoring/</guid>
-      <description>In my humble experience any discussion about refactoring should start with Refactoring (Martin Fowler/Kent Beck) and Clean Code (Robert Martin). Having at least a rudimentary understanding of the design patterns presented in Gang of Four is helpful too.
-It can be daunting to know where exactly to begin with those resources or understand why it matters so let&amp;rsquo;s dive into the following concrete example to provide some clarity on what refactoring a module may look like.</description>
+      <author>jjesc1031@gmail.com (James Sevedge)</author>
+      <guid>https://jamessevedge.com/articles/an-excercise-in-refactoring/</guid>
+      <description>&lt;p&gt;In my humble experience any discussion about refactoring should start with &lt;a href=&#34;https://martinfowler.com/books/refactoring.html&#34;&gt;Refactoring&lt;/a&gt; (Martin Fowler/Kent Beck) and &lt;a href=&#34;https://www.oreilly.com/library/view/clean-code-a/9780136083238/&#34;&gt;Clean Code&lt;/a&gt; (Robert Martin).  Having at least a rudimentary understanding of the design patterns presented in &lt;a href=&#34;https://www.amazon.com/gp/product/0201633612/ref=as_li_tl?ie=UTF8&amp;amp;camp=1789&amp;amp;creative=9325&amp;amp;creativeASIN=0201633612&amp;amp;linkCode=as2&amp;amp;tag=martinfowlerc-20&#34;&gt;Gang of Four&lt;/a&gt; is helpful too.&lt;/p&gt;
+&lt;p&gt;It can be daunting to know where exactly to begin with those resources or understand why it matters so let&amp;rsquo;s dive into the following concrete example to provide some clarity on what refactoring a module &lt;em&gt;may&lt;/em&gt; look like.&lt;/p&gt;
+&lt;h2 id=&#34;refactoring-excercise&#34;&gt;Refactoring Excercise&lt;/h2&gt;
+&lt;p&gt;Let&amp;rsquo;s start with some code that could use a little (or a lot of!) refactoring…&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-javascript&#34; data-lang=&#34;javascript&#34;&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;axios&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;require&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;axios&amp;#39;&lt;/span&gt;);
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;function&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;uploadFiles&lt;/span&gt;() {
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;loginResponse&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;await&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;axios&lt;/span&gt;({
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;url&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;https://the-cloud/api/v1/login&amp;#39;&lt;/span&gt;,
+        &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;GET&amp;#39;&lt;/span&gt;,
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;auth&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; {
+            &lt;span style=&#34;color:#a6e22e&#34;&gt;username&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;a_username&amp;#39;&lt;/span&gt;,
+            &lt;span style=&#34;color:#a6e22e&#34;&gt;password&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;a_password&amp;#39;&lt;/span&gt;
+        },
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;validateStatus&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;false&lt;/span&gt;
+    });
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; (&lt;span style=&#34;color:#a6e22e&#34;&gt;loginResponse&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;status&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;!==&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;200&lt;/span&gt;) {
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;throw&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;new&lt;/span&gt; Error(&lt;span style=&#34;color:#e6db74&#34;&gt;`HTTP request failed: &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;loginResponse&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;status&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;loginResponse&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;data&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;`&lt;/span&gt;)
+    }
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;authToken&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;loginResponse&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;data&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;token&lt;/span&gt;;
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;encodedCertificateProduction&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Buffer&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;from&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;data&lt;/span&gt;).&lt;span style=&#34;color:#a6e22e&#34;&gt;toString&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;certificate for production environment&amp;#39;&lt;/span&gt;);
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;encodedKeyProduction&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Buffer&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;from&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;data&lt;/span&gt;).&lt;span style=&#34;color:#a6e22e&#34;&gt;toString&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;key for production environment&amp;#39;&lt;/span&gt;);
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;productionFile&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; {
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;description&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Production certificate/key&amp;#39;&lt;/span&gt;,
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;production_file&amp;#39;&lt;/span&gt;,
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;certificate&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;encodedCertificateProduction&lt;/span&gt;,
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;key&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;encodedKeyProduction&lt;/span&gt;,
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;metadata&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; {
+            &lt;span style=&#34;color:#a6e22e&#34;&gt;env&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;production&amp;#39;&lt;/span&gt;
+        }
+    };
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;productionFileResponse&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;await&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;axios&lt;/span&gt;({
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;url&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;https://the-cloud/api/v1/storage/my-bucket&amp;#39;&lt;/span&gt;,
+        &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;POST&amp;#39;&lt;/span&gt;,
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;headers&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; {
+            &lt;span style=&#34;color:#a6e22e&#34;&gt;Authorization&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;`Bearer &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;authToken&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;`&lt;/span&gt;
+        },
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;data&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;productionFile&lt;/span&gt;,
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;validateStatus&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;false&lt;/span&gt;
+    });
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; (&lt;span style=&#34;color:#a6e22e&#34;&gt;productionFileResponse&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;status&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;!==&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;200&lt;/span&gt;) {
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;throw&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;new&lt;/span&gt; Error(&lt;span style=&#34;color:#e6db74&#34;&gt;`HTTP request failed: &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;productionFileResponse&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;status&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;productionFileResponse&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;data&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;`&lt;/span&gt;)
+    }
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;encodedCertificateStaging&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Buffer&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;from&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;data&lt;/span&gt;).&lt;span style=&#34;color:#a6e22e&#34;&gt;toString&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;certificate for staging environment&amp;#39;&lt;/span&gt;);
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;encodedKeyStaging&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Buffer&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;from&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;data&lt;/span&gt;).&lt;span style=&#34;color:#a6e22e&#34;&gt;toString&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;key for staging environment&amp;#39;&lt;/span&gt;);
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;stagingFile&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; {
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;description&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Staging certificate/key&amp;#39;&lt;/span&gt;,
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;staging_file&amp;#39;&lt;/span&gt;,
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;certificate&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;encodedCertificateStaging&lt;/span&gt;,
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;key&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;encodedKeyStaging&lt;/span&gt;,
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;metadata&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; {
+            &lt;span style=&#34;color:#a6e22e&#34;&gt;env&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;staging&amp;#39;&lt;/span&gt;
+        }
+    };
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;stagingFileResponse&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;await&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;axios&lt;/span&gt;({
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;url&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;https://the-cloud/api/v1/storage/my-bucket&amp;#39;&lt;/span&gt;,
+        &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;POST&amp;#39;&lt;/span&gt;,
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;headers&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; {
+            &lt;span style=&#34;color:#a6e22e&#34;&gt;Authorization&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;`Bearer &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;authToken&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;`&lt;/span&gt;
+        },
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;data&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;stagingFile&lt;/span&gt;,
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;validateStatus&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;false&lt;/span&gt;
+    });
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; (&lt;span style=&#34;color:#a6e22e&#34;&gt;stagingFileResponse&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;status&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;!==&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;200&lt;/span&gt;) {
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;throw&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;new&lt;/span&gt; Error(&lt;span style=&#34;color:#e6db74&#34;&gt;`HTTP request failed: &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;stagingFileResponse&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;status&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;stagingFileResponse&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;data&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;`&lt;/span&gt;)
+    }
+}
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;await&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;uploadFiles&lt;/span&gt;();
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;How hard was it tell the purpose of the code and did the code &amp;ldquo;smell&amp;rdquo; at all to you?  If so, how?&lt;/p&gt;
+&lt;h3 id=&#34;readability&#34;&gt;Readability&lt;/h3&gt;
+&lt;p&gt;The first thing you notice may be how hard it is to understand what the code is doing, so let&amp;rsquo;s add some comments (for now, more on that later) to help the developers reading this code.&lt;/p&gt;
+&lt;p&gt;Actions to take: 1) Add some comments to &lt;code&gt;uploadFiles&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-javascript&#34; data-lang=&#34;javascript&#34;&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;axios&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;require&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;axios&amp;#39;&lt;/span&gt;);
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;function&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;uploadFiles&lt;/span&gt;() {
+    &lt;span style=&#34;color:#75715e&#34;&gt;// login to &amp;#34;the cloud&amp;#34; and get a token
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;loginResponse&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;await&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;axios&lt;/span&gt;({
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;url&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;https://the-cloud/api/v1/login&amp;#39;&lt;/span&gt;,
+        &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;GET&amp;#39;&lt;/span&gt;,
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;auth&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; {
+            &lt;span style=&#34;color:#a6e22e&#34;&gt;username&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;a_username&amp;#39;&lt;/span&gt;,
+            &lt;span style=&#34;color:#a6e22e&#34;&gt;password&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;a_password&amp;#39;&lt;/span&gt;
+        },
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;validateStatus&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;false&lt;/span&gt;
+    });
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; (&lt;span style=&#34;color:#a6e22e&#34;&gt;loginResponse&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;status&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;!==&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;200&lt;/span&gt;) {
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;throw&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;new&lt;/span&gt; Error(&lt;span style=&#34;color:#e6db74&#34;&gt;`HTTP request failed: &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;loginResponse&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;status&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;loginResponse&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;data&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;`&lt;/span&gt;)
+    }
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;authToken&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;loginResponse&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;data&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;token&lt;/span&gt;;
+    &lt;span style=&#34;color:#75715e&#34;&gt;// encode production certificate/key
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;encodedCertificateProduction&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Buffer&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;from&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;data&lt;/span&gt;).&lt;span style=&#34;color:#a6e22e&#34;&gt;toString&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;certificate for production environment&amp;#39;&lt;/span&gt;);
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;encodedKeyProduction&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Buffer&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;from&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;data&lt;/span&gt;).&lt;span style=&#34;color:#a6e22e&#34;&gt;toString&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;key for production environment&amp;#39;&lt;/span&gt;);
+    &lt;span style=&#34;color:#75715e&#34;&gt;// create production certificate/key file contents (axios will JSON stringify the JavaScript object for us)
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;productionFile&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; {
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;description&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Production certificate/key&amp;#39;&lt;/span&gt;,
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;production_file&amp;#39;&lt;/span&gt;,
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;certificate&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;encodedCertificateProduction&lt;/span&gt;,
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;key&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;encodedKeyProduction&lt;/span&gt;,
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;metadata&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; {
+            &lt;span style=&#34;color:#a6e22e&#34;&gt;env&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;production&amp;#39;&lt;/span&gt;
+        }
+    };
+    &lt;span style=&#34;color:#75715e&#34;&gt;// upload production certificate/key file contents (uses name in HTTP body to create a file under &amp;#34;my-bucket&amp;#34;)
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;productionFileResponse&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;await&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;axios&lt;/span&gt;({
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;url&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;https://the-cloud/api/v1/storage/my-bucket&amp;#39;&lt;/span&gt;,
+        &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;POST&amp;#39;&lt;/span&gt;,
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;headers&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; {
+            &lt;span style=&#34;color:#a6e22e&#34;&gt;Authorization&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;`Bearer &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;authToken&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;`&lt;/span&gt;
+        },
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;data&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;productionFile&lt;/span&gt;,
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;validateStatus&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;false&lt;/span&gt;
+    });
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; (&lt;span style=&#34;color:#a6e22e&#34;&gt;productionFileResponse&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;status&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;!==&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;200&lt;/span&gt;) {
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;throw&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;new&lt;/span&gt; Error(&lt;span style=&#34;color:#e6db74&#34;&gt;`HTTP request failed: &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;productionFileResponse&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;status&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;productionFileResponse&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;data&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;`&lt;/span&gt;)
+    }
+    &lt;span style=&#34;color:#75715e&#34;&gt;// create staging certificate/key file contents (axios will JSON stringify the JavaScript object for us)
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;encodedCertificateStaging&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Buffer&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;from&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;data&lt;/span&gt;).&lt;span style=&#34;color:#a6e22e&#34;&gt;toString&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;certificate for staging environment&amp;#39;&lt;/span&gt;);
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;encodedKeyStaging&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Buffer&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;from&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;data&lt;/span&gt;).&lt;span style=&#34;color:#a6e22e&#34;&gt;toString&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;key for staging environment&amp;#39;&lt;/span&gt;);
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;stagingFile&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; {
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;description&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Staging certificate/key&amp;#39;&lt;/span&gt;,
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;staging_file&amp;#39;&lt;/span&gt;,
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;certificate&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;encodedCertificateStaging&lt;/span&gt;,
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;key&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;encodedKeyStaging&lt;/span&gt;,
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;metadata&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; {
+            &lt;span style=&#34;color:#a6e22e&#34;&gt;env&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;staging&amp;#39;&lt;/span&gt;
+        }
+    };
+    &lt;span style=&#34;color:#75715e&#34;&gt;// upload staging certificate/key file contents (uses name in HTTP body to create a file under &amp;#34;my-bucket&amp;#34;)
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;stagingFileResponse&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;await&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;axios&lt;/span&gt;({
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;url&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;https://the-cloud/api/v1/storage/my-bucket&amp;#39;&lt;/span&gt;,
+        &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;POST&amp;#39;&lt;/span&gt;,
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;headers&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; {
+            &lt;span style=&#34;color:#a6e22e&#34;&gt;Authorization&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;`Bearer &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;authToken&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;`&lt;/span&gt;
+        },
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;data&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;stagingFile&lt;/span&gt;,
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;validateStatus&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;false&lt;/span&gt;
+    });
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; (&lt;span style=&#34;color:#a6e22e&#34;&gt;stagingFileResponse&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;status&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;!==&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;200&lt;/span&gt;) {
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;throw&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;new&lt;/span&gt; Error(&lt;span style=&#34;color:#e6db74&#34;&gt;`HTTP request failed: &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;stagingFileResponse&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;status&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;stagingFileResponse&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;data&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;`&lt;/span&gt;)
+    }
+}
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;await&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;uploadFiles&lt;/span&gt;();
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;duplication&#34;&gt;Duplication&lt;/h3&gt;
+&lt;p&gt;Ok, that is a little better… at least it is easier to understand what is happening.  But the function is still large and there are blocks of code that are almost exactly the same so let&amp;rsquo;s extract those into some helper methods.&lt;/p&gt;
+&lt;p&gt;Actions to take: 1) Create &lt;code&gt;_generateFile&lt;/code&gt; function and use it in &lt;code&gt;uploadFiles&lt;/code&gt; for both environments 2) Create &lt;code&gt;_uploadFile&lt;/code&gt; function and use it in &lt;code&gt;uploadFiles&lt;/code&gt; for both environments&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-javascript&#34; data-lang=&#34;javascript&#34;&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;axios&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;require&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;axios&amp;#39;&lt;/span&gt;);
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;function&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;uploadFiles&lt;/span&gt;() {
+    &lt;span style=&#34;color:#75715e&#34;&gt;// login to &amp;#34;the cloud&amp;#34; and get a token
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;loginResponse&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;await&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;axios&lt;/span&gt;({
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;url&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;https://the-cloud/api/v1/login&amp;#39;&lt;/span&gt;,
+        &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;GET&amp;#39;&lt;/span&gt;,
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;auth&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; {
+            &lt;span style=&#34;color:#a6e22e&#34;&gt;username&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;a_username&amp;#39;&lt;/span&gt;,
+            &lt;span style=&#34;color:#a6e22e&#34;&gt;password&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;a_password&amp;#39;&lt;/span&gt;
+        },
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;validateStatus&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;false&lt;/span&gt;
+    });
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; (&lt;span style=&#34;color:#a6e22e&#34;&gt;loginResponse&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;status&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;!==&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;200&lt;/span&gt;) {
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;throw&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;new&lt;/span&gt; Error(&lt;span style=&#34;color:#e6db74&#34;&gt;`HTTP request failed: &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;loginResponse&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;status&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;loginResponse&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;data&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;`&lt;/span&gt;)
+    }
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;authToken&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;loginResponse&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;data&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;token&lt;/span&gt;;
+    &lt;span style=&#34;color:#75715e&#34;&gt;// create production certificate/key file contents (axios will JSON stringify the JavaScript object for us)
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;productionFile&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;_&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;generateFile&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;production&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;certificate for production environment&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;key for production environment&amp;#39;&lt;/span&gt;);
+    &lt;span style=&#34;color:#75715e&#34;&gt;// upload production certificate/key file contents (uses name in HTTP body to create a file under &amp;#34;my-bucket&amp;#34;)
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;await&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;_&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;uploadFile&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;authToken&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;productionFile&lt;/span&gt;);
+    &lt;span style=&#34;color:#75715e&#34;&gt;// create staging certificate/key file contents (axios will JSON stringify the JavaScript object for us)
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;stagingFile&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;_&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;generateFile&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;staging&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;certificate for staging environment&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;key for staging environment&amp;#39;&lt;/span&gt;);
+    &lt;span style=&#34;color:#75715e&#34;&gt;// upload staging certificate/key file contents (uses name in HTTP body to create a file under &amp;#34;my-bucket&amp;#34;)
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;await&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;_&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;uploadFile&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;authToken&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;stagingFile&lt;/span&gt;);
+}
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;function&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;_&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;generateFile&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;environment&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;certificate&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;key&lt;/span&gt;) {
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; {
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;description&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;`&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;environment&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt; certificate/key`&lt;/span&gt;,
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;`&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;environment&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;_file`&lt;/span&gt;,
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;certificate&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Buffer&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;from&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;data&lt;/span&gt;).&lt;span style=&#34;color:#a6e22e&#34;&gt;toString&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;certificate&lt;/span&gt;),
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;key&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Buffer&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;from&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;data&lt;/span&gt;).&lt;span style=&#34;color:#a6e22e&#34;&gt;toString&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;key&lt;/span&gt;),
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;metadata&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; {
+            &lt;span style=&#34;color:#a6e22e&#34;&gt;env&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;environment&lt;/span&gt;
+        }
+    };
+}
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;async&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;function&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;_&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;uploadFile&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;authToken&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;file&lt;/span&gt;) {
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;response&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;await&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;axios&lt;/span&gt;({
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;url&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;https://the-cloud/api/v1/storage/my-bucket&amp;#39;&lt;/span&gt;,
+        &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;POST&amp;#39;&lt;/span&gt;,
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;headers&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; {
+            &lt;span style=&#34;color:#a6e22e&#34;&gt;Authorization&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;`Bearer &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;authToken&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;`&lt;/span&gt;
+        },
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;data&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;file&lt;/span&gt;,
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;validateStatus&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;false&lt;/span&gt;
+    });
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; (&lt;span style=&#34;color:#a6e22e&#34;&gt;response&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;status&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;!==&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;200&lt;/span&gt;) {
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;throw&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;new&lt;/span&gt; Error(&lt;span style=&#34;color:#e6db74&#34;&gt;`HTTP request failed: &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;response&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;status&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;response&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;data&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;`&lt;/span&gt;)
+    }
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;response&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;data&lt;/span&gt;;
+}
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;await&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;uploadFiles&lt;/span&gt;();
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;extract-functionality&#34;&gt;Extract functionality&lt;/h3&gt;
+&lt;p&gt;Now &lt;code&gt;uploadFiles&lt;/code&gt; is starting to look pretty good, but just because code is not duplicated does not mean it shouldn&amp;rsquo;t be extracted.  If there is a block of code that makes sense to extract out, do it.&lt;/p&gt;
+&lt;p&gt;Actions To Take: 1) Extract out &lt;code&gt;login&lt;/code&gt; functionality and use it in &lt;code&gt;uploadFiles&lt;/code&gt; 2) Extract out &lt;code&gt;_generateAndUploadFile&lt;/code&gt; functionality and use it in &lt;code&gt;uploadFiles&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-javascript&#34; data-lang=&#34;javascript&#34;&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;axios&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;require&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;axios&amp;#39;&lt;/span&gt;);
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;function&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;uploadFiles&lt;/span&gt;() {
+    &lt;span style=&#34;color:#75715e&#34;&gt;// login to &amp;#34;the cloud&amp;#34; and get a token
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;authToken&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;await&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;_&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;login&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;a_username&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;a_password&amp;#39;&lt;/span&gt;);
+    &lt;span style=&#34;color:#75715e&#34;&gt;// create production certificate/key file contents (axios will JSON stringify the JavaScript object for us)
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;// upload production certificate/key file contents (uses name in HTTP body to create a file under &amp;#34;my-bucket&amp;#34;)
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;await&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;_&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;generateAndUploadFile&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;authToken&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;production&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;certificate for production environment&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;key for production environment&amp;#39;&lt;/span&gt;)
+    &lt;span style=&#34;color:#75715e&#34;&gt;// create staging certificate/key file contents (axios will JSON stringify the JavaScript object for us)
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;// upload staging certificate/key file contents (uses name in HTTP body to create a file under &amp;#34;my-bucket&amp;#34;)
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;await&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;_&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;generateAndUploadFile&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;authToken&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;staging&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;certificate for staging environment&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;key for staging environment&amp;#39;&lt;/span&gt;)
+}
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;async&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;function&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;_&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;generateAndUploadFile&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;authToken&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;environment&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;certificate&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;key&lt;/span&gt;) {
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;await&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;_&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;uploadFile&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;authToken&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;_&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;generateFile&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;environment&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;certificate&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;key&lt;/span&gt;));
+}
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;function&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;_&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;generateFile&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;environment&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;certificate&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;key&lt;/span&gt;) {
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; {
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;description&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;`&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;environment&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt; certificate/key`&lt;/span&gt;,
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;`&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;environment&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;_file`&lt;/span&gt;,
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;certificate&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Buffer&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;from&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;data&lt;/span&gt;).&lt;span style=&#34;color:#a6e22e&#34;&gt;toString&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;certificate&lt;/span&gt;),
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;key&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Buffer&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;from&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;data&lt;/span&gt;).&lt;span style=&#34;color:#a6e22e&#34;&gt;toString&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;key&lt;/span&gt;),
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;metadata&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; {
+            &lt;span style=&#34;color:#a6e22e&#34;&gt;env&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;environment&lt;/span&gt;
+        }
+    };
+}
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;async&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;function&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;_&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;login&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;username&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;password&lt;/span&gt;) {
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;loginResponse&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;await&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;axios&lt;/span&gt;({
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;url&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;https://the-cloud/api/v1/login&amp;#39;&lt;/span&gt;,
+        &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;GET&amp;#39;&lt;/span&gt;,
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;auth&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; {
+            &lt;span style=&#34;color:#a6e22e&#34;&gt;username&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;username&lt;/span&gt;,
+            &lt;span style=&#34;color:#a6e22e&#34;&gt;password&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;password&lt;/span&gt;
+        },
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;validateStatus&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;false&lt;/span&gt;
+    });
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; (&lt;span style=&#34;color:#a6e22e&#34;&gt;loginResponse&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;status&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;!==&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;200&lt;/span&gt;) {
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;throw&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;new&lt;/span&gt; Error(&lt;span style=&#34;color:#e6db74&#34;&gt;`HTTP request failed: &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;loginResponse&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;status&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;loginResponse&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;data&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;`&lt;/span&gt;)
+    }
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;response&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;data&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;token&lt;/span&gt;;
+}
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;async&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;function&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;_&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;uploadFile&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;authToken&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;file&lt;/span&gt;) {
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;response&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;await&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;axios&lt;/span&gt;({
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;url&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;https://the-cloud/api/v1/storage/my-bucket&amp;#39;&lt;/span&gt;,
+        &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;POST&amp;#39;&lt;/span&gt;,
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;headers&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; {
+            &lt;span style=&#34;color:#a6e22e&#34;&gt;Authorization&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;`Bearer &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;authToken&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;`&lt;/span&gt;
+        },
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;data&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;file&lt;/span&gt;,
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;validateStatus&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;false&lt;/span&gt;
+    });
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; (&lt;span style=&#34;color:#a6e22e&#34;&gt;response&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;status&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;!==&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;200&lt;/span&gt;) {
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;throw&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;new&lt;/span&gt; Error(&lt;span style=&#34;color:#e6db74&#34;&gt;`HTTP request failed: &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;response&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;status&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;response&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;data&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;`&lt;/span&gt;)
+    }
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;response&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;data&lt;/span&gt;;
+}
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;await&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;uploadFiles&lt;/span&gt;();
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;magic-strings&#34;&gt;Magic strings&lt;/h3&gt;
+&lt;p&gt;Avoid &lt;a href=&#34;https://en.wikipedia.org/wiki/Magic_string&#34;&gt;magic strings&lt;/a&gt;, there are a number of them still.  In this refactoring example we will not delve into how some of these items (username, password, certificate/key content, etc.) should probably be provided as input or loaded from the environment, but let&amp;rsquo;s at least not sprinkle them throughout the code.&lt;/p&gt;
+&lt;p&gt;Actions to take: 1) Move magic strings to the top of the module and update references&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-javascript&#34; data-lang=&#34;javascript&#34;&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;axios&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;require&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;axios&amp;#39;&lt;/span&gt;);
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;CLOUD_SERVICE_API&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;https://the-cloud/api/v1&amp;#39;&lt;/span&gt;;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;USERNAME&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;a_username&amp;#39;&lt;/span&gt;;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;PASSWORD&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;a_password&amp;#39;&lt;/span&gt;;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;TLS_CONTENT&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; {
+    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;production&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; {
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;certificate&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;certificate for production environment&amp;#39;&lt;/span&gt;,
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;key&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;key for production environment&amp;#39;&lt;/span&gt;
+    },
+    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;staging&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; {
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;certificate&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;certificate for staging environment&amp;#39;&lt;/span&gt;,
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;key&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;key for staging environment&amp;#39;&lt;/span&gt;
+    }
+}
+&lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;HTTP_RESPONSE_CODES&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; {
+    &lt;span style=&#34;color:#a6e22e&#34;&gt;SUCCESS&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;200&lt;/span&gt;
+}
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;function&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;uploadFiles&lt;/span&gt;() {
+    &lt;span style=&#34;color:#75715e&#34;&gt;// login to &amp;#34;the cloud&amp;#34; and get a token
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;authToken&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;await&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;_&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;login&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;USERNAME&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;PASSWORD&lt;/span&gt;);
+    &lt;span style=&#34;color:#75715e&#34;&gt;// create production certificate/key file contents (axios will JSON stringify the JavaScript object for us)
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;// upload production certificate/key file contents (uses name in HTTP body to create a file under &amp;#34;my-bucket&amp;#34;)
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;await&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;_&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;generateAndUploadFile&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;authToken&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;production&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;TLS_CONTENT&lt;/span&gt;[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;production&amp;#39;&lt;/span&gt;].&lt;span style=&#34;color:#a6e22e&#34;&gt;certificate&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;TLS_CONTENT&lt;/span&gt;[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;production&amp;#39;&lt;/span&gt;].&lt;span style=&#34;color:#a6e22e&#34;&gt;key&lt;/span&gt;)
+    &lt;span style=&#34;color:#75715e&#34;&gt;// create staging certificate/key file contents (axios will JSON stringify the JavaScript object for us)
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;// upload staging certificate/key file contents (uses name in HTTP body to create a file under &amp;#34;my-bucket&amp;#34;)
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;await&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;_&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;generateAndUploadFile&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;authToken&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;staging&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;TLS_CONTENT&lt;/span&gt;[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;staging&amp;#39;&lt;/span&gt;].&lt;span style=&#34;color:#a6e22e&#34;&gt;certificate&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;TLS_CONTENT&lt;/span&gt;[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;staging&amp;#39;&lt;/span&gt;].&lt;span style=&#34;color:#a6e22e&#34;&gt;key&lt;/span&gt;)
+}
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;async&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;function&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;_&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;generateAndUploadFile&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;authToken&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;environment&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;certificate&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;key&lt;/span&gt;) {
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;await&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;_&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;uploadFile&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;authToken&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;_&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;generateFile&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;environment&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;certificate&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;key&lt;/span&gt;));
+}
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;function&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;_&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;generateFile&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;environment&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;certificate&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;key&lt;/span&gt;) {
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; {
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;description&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;`&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;environment&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt; certificate/key`&lt;/span&gt;,
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;`&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;environment&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;_file`&lt;/span&gt;,
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;certificate&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Buffer&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;from&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;data&lt;/span&gt;).&lt;span style=&#34;color:#a6e22e&#34;&gt;toString&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;certificate&lt;/span&gt;),
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;key&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Buffer&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;from&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;data&lt;/span&gt;).&lt;span style=&#34;color:#a6e22e&#34;&gt;toString&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;key&lt;/span&gt;),
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;metadata&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; {
+            &lt;span style=&#34;color:#a6e22e&#34;&gt;env&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;environment&lt;/span&gt;
+        }
+    };
+}
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;async&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;function&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;_&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;login&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;username&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;password&lt;/span&gt;) {
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;loginResponse&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;await&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;axios&lt;/span&gt;({
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;url&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;`&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;CLOUD_SERVICE_API&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;/login`&lt;/span&gt;,
+        &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;GET&amp;#39;&lt;/span&gt;,
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;auth&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; {
+            &lt;span style=&#34;color:#a6e22e&#34;&gt;username&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;username&lt;/span&gt;,
+            &lt;span style=&#34;color:#a6e22e&#34;&gt;password&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;password&lt;/span&gt;
+        },
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;validateStatus&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;false&lt;/span&gt;
+    });
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; (&lt;span style=&#34;color:#a6e22e&#34;&gt;loginResponse&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;status&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;!==&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;HTTP_RESPONSE_CODES&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;SUCCESS&lt;/span&gt;) {
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;throw&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;new&lt;/span&gt; Error(&lt;span style=&#34;color:#e6db74&#34;&gt;`HTTP request failed: &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;loginResponse&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;status&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;loginResponse&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;data&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;`&lt;/span&gt;)
+    }
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;response&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;data&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;token&lt;/span&gt;;
+}
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;async&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;function&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;_&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;uploadFile&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;authToken&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;file&lt;/span&gt;) {
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;response&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;await&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;axios&lt;/span&gt;({
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;url&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;`&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;CLOUD_SERVICE_API&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;/storage/my-bucket`&lt;/span&gt;,
+        &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;POST&amp;#39;&lt;/span&gt;,
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;headers&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; {
+            &lt;span style=&#34;color:#a6e22e&#34;&gt;Authorization&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;`Bearer &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;authToken&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;`&lt;/span&gt;
+        },
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;data&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;file&lt;/span&gt;,
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;validateStatus&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;false&lt;/span&gt;
+    });
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; (&lt;span style=&#34;color:#a6e22e&#34;&gt;response&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;status&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;!==&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;HTTP_RESPONSE_CODES&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;SUCCESS&lt;/span&gt;) {
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;throw&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;new&lt;/span&gt; Error(&lt;span style=&#34;color:#e6db74&#34;&gt;`HTTP request failed: &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;response&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;status&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;response&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;data&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;`&lt;/span&gt;)
+    }
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;response&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;data&lt;/span&gt;;
+}
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;await&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;uploadFiles&lt;/span&gt;();
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;remove-unnecessary-comments&#34;&gt;Remove unnecessary comments&lt;/h3&gt;
+&lt;p&gt;Well now those comments are starting to look a little silly, the methods are named well enough to allow readers to understand what is going on without them.  Let&amp;rsquo;s just remove the comments.&lt;/p&gt;
+&lt;p&gt;Actions to take: 1) Remove unnecessary comments&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-javascript&#34; data-lang=&#34;javascript&#34;&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;axios&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;require&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;axios&amp;#39;&lt;/span&gt;);
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;CLOUD_SERVICE_API&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;https://the-cloud/api/v1&amp;#39;&lt;/span&gt;;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;USERNAME&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;a_username&amp;#39;&lt;/span&gt;;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;PASSWORD&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;a_password&amp;#39;&lt;/span&gt;;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;TLS_CONTENT&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; {
+    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;production&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; {
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;certificate&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;certificate for production environment&amp;#39;&lt;/span&gt;,
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;key&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;key for production environment&amp;#39;&lt;/span&gt;
+    },
+    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;staging&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; {
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;certificate&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;certificate for staging environment&amp;#39;&lt;/span&gt;,
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;key&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;key for staging environment&amp;#39;&lt;/span&gt;
+    }
+}
+&lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;HTTP_RESPONSE_CODES&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; {
+    &lt;span style=&#34;color:#a6e22e&#34;&gt;SUCCESS&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;200&lt;/span&gt;
+}
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;function&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;uploadFiles&lt;/span&gt;() {
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;authToken&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;await&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;_&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;login&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;USERNAME&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;PASSWORD&lt;/span&gt;);
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;await&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;_&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;generateAndUploadFile&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;authToken&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;production&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;TLS_CONTENT&lt;/span&gt;[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;production&amp;#39;&lt;/span&gt;].&lt;span style=&#34;color:#a6e22e&#34;&gt;certificate&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;TLS_CONTENT&lt;/span&gt;[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;production&amp;#39;&lt;/span&gt;].&lt;span style=&#34;color:#a6e22e&#34;&gt;key&lt;/span&gt;)
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;await&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;_&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;generateAndUploadFile&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;authToken&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;staging&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;TLS_CONTENT&lt;/span&gt;[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;staging&amp;#39;&lt;/span&gt;].&lt;span style=&#34;color:#a6e22e&#34;&gt;certificate&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;TLS_CONTENT&lt;/span&gt;[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;staging&amp;#39;&lt;/span&gt;].&lt;span style=&#34;color:#a6e22e&#34;&gt;key&lt;/span&gt;)
+}
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;async&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;function&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;_&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;generateAndUploadFile&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;authToken&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;environment&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;certificate&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;key&lt;/span&gt;) {
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;await&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;_&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;uploadFile&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;authToken&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;_&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;generateFile&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;environment&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;certificate&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;key&lt;/span&gt;));
+}
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;function&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;_&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;generateFile&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;environment&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;certificate&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;key&lt;/span&gt;) {
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; {
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;description&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;`&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;environment&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt; certificate/key`&lt;/span&gt;,
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;`&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;environment&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;_file`&lt;/span&gt;,
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;certificate&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Buffer&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;from&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;data&lt;/span&gt;).&lt;span style=&#34;color:#a6e22e&#34;&gt;toString&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;certificate&lt;/span&gt;),
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;key&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Buffer&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;from&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;data&lt;/span&gt;).&lt;span style=&#34;color:#a6e22e&#34;&gt;toString&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;key&lt;/span&gt;),
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;metadata&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; {
+            &lt;span style=&#34;color:#a6e22e&#34;&gt;env&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;environment&lt;/span&gt;
+        }
+    };
+}
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;async&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;function&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;_&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;login&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;username&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;password&lt;/span&gt;) {
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;loginResponse&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;await&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;axios&lt;/span&gt;({
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;url&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;`&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;CLOUD_SERVICE_API&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;/login`&lt;/span&gt;,
+        &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;GET&amp;#39;&lt;/span&gt;,
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;auth&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; {
+            &lt;span style=&#34;color:#a6e22e&#34;&gt;username&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;username&lt;/span&gt;,
+            &lt;span style=&#34;color:#a6e22e&#34;&gt;password&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;password&lt;/span&gt;
+        },
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;validateStatus&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;false&lt;/span&gt;
+    });
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; (&lt;span style=&#34;color:#a6e22e&#34;&gt;loginResponse&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;status&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;!==&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;HTTP_RESPONSE_CODES&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;SUCCESS&lt;/span&gt;) {
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;throw&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;new&lt;/span&gt; Error(&lt;span style=&#34;color:#e6db74&#34;&gt;`HTTP request failed: &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;loginResponse&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;status&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;loginResponse&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;data&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;`&lt;/span&gt;)
+    }
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;response&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;data&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;token&lt;/span&gt;;
+}
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;async&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;function&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;_&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;uploadFile&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;authToken&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;file&lt;/span&gt;) {
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;response&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;await&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;axios&lt;/span&gt;({
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;url&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;`&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;CLOUD_SERVICE_API&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;/storage/my-bucket`&lt;/span&gt;,
+        &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;POST&amp;#39;&lt;/span&gt;,
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;headers&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; {
+            &lt;span style=&#34;color:#a6e22e&#34;&gt;Authorization&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;`Bearer &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;authToken&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;`&lt;/span&gt;
+        },
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;data&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;file&lt;/span&gt;,
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;validateStatus&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;false&lt;/span&gt;
+    });
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; (&lt;span style=&#34;color:#a6e22e&#34;&gt;response&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;status&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;!==&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;HTTP_RESPONSE_CODES&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;SUCCESS&lt;/span&gt;) {
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;throw&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;new&lt;/span&gt; Error(&lt;span style=&#34;color:#e6db74&#34;&gt;`HTTP request failed: &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;response&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;status&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;response&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;data&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;`&lt;/span&gt;)
+    }
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;response&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;data&lt;/span&gt;;
+}
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;await&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;uploadFiles&lt;/span&gt;();
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;futher-optimizations&#34;&gt;Futher optimizations&lt;/h2&gt;
+&lt;p&gt;There is more that can be done to this code of course, such as 1) moving the low level cloud service API interaction to a &lt;code&gt;CloudApiClient&lt;/code&gt; class to encapsulate that functionality (and allow support via polymorphism for another cloud) 2) creating a &lt;code&gt;FilesClient&lt;/code&gt; class to encapsulate cloud service file operation behavior 3) wrapping the top level certificate and key upload business logic into a class which handles loading the files from the environment and calling the other classes 4) and so on…&lt;/p&gt;
+&lt;script src=&#34;https://unpkg.com/mermaid@8.5.1/dist/mermaid.min.js&#34;&gt;&lt;/script&gt;
+
+&lt;script&gt;
+    mermaid.initialize({ 
+        theme: &#39;dark&#39;,
+        maxWidth: true
+    });
+&lt;/script&gt;
+
+&lt;pre class=&#34;mermaid&#34; align=&#34;center&#34;&gt;
+classDiagram
+    class CloudApiClient{
+        +login()
+        +makeRequest()
+    }
+    class FilesClient{
+        +init()
+        +uploadFile()
+    }
+    class CertificateAndKeyUploader{
+        +uploadFiles()
+    }
+    CertificateAndKeyUploader ..&gt; FilesClient
+    FilesClient ..&gt; CloudApiClient
+&lt;/pre&gt;
+&lt;p&gt;but this at least covers the broad strokes of what refactoring a module might look like.&lt;/p&gt;
+&lt;h2 id=&#34;additional-resources&#34;&gt;Additional Resources&lt;/h2&gt;
+&lt;p&gt;I find that once you have a foundational understanding of code refactoring, you simply need to excercise that knowledge over time to get better… but to get a refresher on specific principles you can go to the wonderful site &lt;a href=&#34;https://refactoring.com&#34;&gt;refactoring.com&lt;/a&gt; and check out the &lt;a href=&#34;https://refactoring.com/catalog/&#34;&gt;catalog&lt;/a&gt;.  I also highly recommend, when the time is right, to find and spend the time to watch the &amp;ldquo;Uncle Bob&amp;rdquo; Clean Code &lt;a href=&#34;https://www.youtube.com/watch?v=7EmboKQH8lM&#34;&gt;series&lt;/a&gt; where he goes into detail about the topics covered in his book.&lt;/p&gt;
+</description>
     </item>
     
     <item>
       <title>Treat your Career Like a Startup</title>
-      <link>https://jsevedge.github.io/articles/career-as-a-startup/</link>
+      <link>https://jamessevedge.com/articles/career-as-a-startup/</link>
       <pubDate>Tue, 19 Oct 2021 00:00:00 +0000</pubDate>
-      
-      <guid>https://jsevedge.github.io/articles/career-as-a-startup/</guid>
-      <description>Lately I have been having discussions with both close friends and distant acquaintances on &amp;ldquo;leveling up&amp;rdquo; in your career, along the way I have formulated a few thoughts on this topic.
-Do the job you want, not the job you have
-It is a well understood concept that you should start doing elements of the job you would like to be promoted into before you get the promotion, so figure out what those elements are and do them when opportunity allows.</description>
+      <author>jjesc1031@gmail.com (James Sevedge)</author>
+      <guid>https://jamessevedge.com/articles/career-as-a-startup/</guid>
+      <description>&lt;p&gt;Lately I have been having discussions with both close friends and distant acquaintances on &amp;ldquo;leveling up&amp;rdquo; in your career, along the way I have formulated a few thoughts on this topic.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Do the job you want, not the job you have&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;It is a well understood concept that you should start doing elements of the job you would like to be promoted into before you get the promotion, so figure out what those elements are and do them when opportunity allows.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Raise your hand&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Is there a project that your management team has talked about but doesn&amp;rsquo;t know who to assign it to?  Raise your hand.  Is there a learning opportunity relevant to your organization&amp;rsquo;s needs that you can attend and bring back useful information?  Raise your hand.  Is there a project that requires a little travel to a different site?  Raise your hand.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Level up your organizations knowledge&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;While doing the work expected of your current role, figure out what knowledge you could learn and bring back into the team to help the organization level up.  It could be a new tool/library, testing methodology, way of working or anything else as long as it has some direct relevance.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Level up your knowledge&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;This is the most important one, do whatever it takes to continuously learn and surround yourself with peers who have the knowledge you would like to have.  If you feel it has been awhile since you have learned something new, find something and spend a little (or a lot!) of time getting proficient at it.  Always learning, always growing should be the mantra.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Qualifying statement&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Let me qualify these statements by making clear that deriving satisfaction from work output and career trajectory is great, but there is more to life than a career so put this advice into context.  Aspire to have balance in all things.&lt;/p&gt;
+</description>
     </item>
     
     <item>
       <title>API Development (Beyond the Specification Document)</title>
-      <link>https://jsevedge.github.io/articles/api-development-to-customer-ux/</link>
+      <link>https://jamessevedge.com/articles/api-development-to-customer-ux/</link>
       <pubDate>Wed, 20 May 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://jsevedge.github.io/articles/api-development-to-customer-ux/</guid>
-      <description>Creating an API that is well thought out, scales and adopts industry standards can be quite difficult. Creating the API while keeping the end consumer User Experience (UX) at the forefront adds even more cognitive load, however the payoff is worth it to stay disciplined and consider it from the start. Let&amp;rsquo;s talk about what that flow might look like at a high level including some example tooling and processes.</description>
+      <author>jjesc1031@gmail.com (James Sevedge)</author>
+      <guid>https://jamessevedge.com/articles/api-development-to-customer-ux/</guid>
+      <description>&lt;p&gt;Creating an API that is well thought out, scales and adopts industry standards can be quite difficult.  Creating the API while keeping the end consumer User Experience (UX) at the forefront adds even more cognitive load, however the payoff is worth it to stay disciplined and consider it from the start.  Let&amp;rsquo;s talk about what that flow might look like at a high level including some example tooling and processes.&lt;/p&gt;
+&lt;p&gt;First let&amp;rsquo;s assume you have a good API design in place which has been peer-reviewed and articulated in a human and machine readable format, for example if creating a REST API you may articulate this using &lt;a href=&#34;https://openapis.org/&#34;&gt;OpenAPI&lt;/a&gt;, &lt;a href=&#34;https://apiblueprint.org/&#34;&gt;API Blueprint&lt;/a&gt; or some other similar mechanism.  In this example let&amp;rsquo;s assume you have been using OpenAPI.&lt;/p&gt;
+&lt;p&gt;If the OpenAPI specification document describes your API, let&amp;rsquo;s strive to keep it that way.  That is the &lt;em&gt;source of truth&lt;/em&gt;.  Given that assumption all consumer UX should be derived from that document.&lt;/p&gt;
+&lt;p&gt;Ok great, but my API is already implemented so what more is needed here?  And who is this mysterious &amp;ldquo;consumer&amp;rdquo; that demands more than simply a running instance of the API?&lt;/p&gt;
+&lt;p&gt;The most common consumer of API&amp;rsquo;s is other developers trying to make use of your technology platform to accomplish a specific set of tasks which fit into a larger goal.  To enable adoption of the API you must consider a variety of artifacts, including API documentation, hand-crafted examples to describe certain 80/20 usage patterns, multi-language binding SDK bindings and more.&lt;/p&gt;
+&lt;p&gt;Before picking any specific tool you need to do research to ensure any tooling selected makes good design sense (more on that later).  One such resource is &lt;a href=&#34;https://openapi.tools&#34;&gt;https://openapi.tools&lt;/a&gt;.  That being said let&amp;rsquo;s take a look at the below UML flow diagram and then map that to a specific tool.&lt;/p&gt;
+&lt;script src=&#34;https://unpkg.com/mermaid@8.5.1/dist/mermaid.min.js&#34;&gt;&lt;/script&gt;
+
+&lt;script&gt;
+    mermaid.initialize({ 
+        theme: &#39;dark&#39;,
+        maxWidth: true
+    });
+&lt;/script&gt;
+
+&lt;pre class=&#34;mermaid&#34; align=&#34;center&#34;&gt;
+graph TD;
+    api_spec_a[&#34;API Specification (Offering A: /service-1)&#34;] --&gt; sdk_tooling;
+    api_spec_b[&#34;API Specification (Offering B: /service-1)&#34;] --&gt; sdk_tooling;
+    sdk_tooling[&#34;SDK Generation Tooling (Auth, low-level comms, Generator Templates)&#34;] --&gt; sdk_api_docs[&#34;SDK API Docs&#34;];
+    sdk_tooling --&gt; sdk_package[&#34;SDK Package&#34;];
+    sdk_api_docs --&gt; customer_docs[&#34;Consumer Docs&#34;];
+    sdk_package --&gt; package_index[&#34;Package Repository&#34;];
+&lt;/pre&gt;
+&lt;p&gt;As you can see everything in this diagram flows from the API specification document which should be considered the &lt;em&gt;source of truth&lt;/em&gt;, that being said there is still plenty of work and tooling required to get to a polished consumer UX beyond just writing an API specification document.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;API Documentation Generator: &lt;a href=&#34;https://github.com/Redocly/redoc&#34;&gt;ReDoc&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Curated Consumer Documentation: &lt;a href=&#34;https://github.com/gohugoio/hugo&#34;&gt;Hugo&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;SDK Generator: &lt;a href=&#34;https://github.com/OpenAPITools/openapi-generator&#34;&gt;OpenAPI Generator&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Thankfully there is open-source tooling which is available for use, you just have to pick a tool for the problem and hope that when you hit a blocker you will have used it and understand it enough to be able to contribute changes back.&lt;/p&gt;
+</description>
     </item>
     
     <item>
       <title>Hello World</title>
-      <link>https://jsevedge.github.io/articles/hello-world/</link>
+      <link>https://jamessevedge.com/articles/hello-world/</link>
       <pubDate>Wed, 20 May 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://jsevedge.github.io/articles/hello-world/</guid>
-      <description>Congratulations for making it to an obscure post on an obscure site, check out some of the other posts for better content!</description>
+      <author>jjesc1031@gmail.com (James Sevedge)</author>
+      <guid>https://jamessevedge.com/articles/hello-world/</guid>
+      <description>&lt;p&gt;Congratulations for making it to an obscure post on an obscure site, check out some of the other posts for better content!&lt;/p&gt;
+</description>
     </item>
     
   </channel>
