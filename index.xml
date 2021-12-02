@@ -229,24 +229,24 @@ class {{namespace}}Client(BaseFeatureClient):
 &lt;li&gt;Microsoft Azure:
 &lt;ul&gt;
 &lt;li&gt;Specification Location: &lt;a href=&#34;https://github.com/Azure/azure-rest-api-specs&#34;&gt;https://github.com/Azure/azure-rest-api-specs&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;SDK Generator: &lt;a href=&#34;https://github.com/Azure/autorest,&#34;&gt;https://github.com/Azure/autorest,&lt;/a&gt; &lt;a href=&#34;https://github.com/Azure/autorest/blob/master/docs/trampoline.md,&#34;&gt;https://github.com/Azure/autorest/blob/master/docs/trampoline.md,&lt;/a&gt; &lt;a href=&#34;https://github.com/Azure/azure-rest-api-specs/tree/master/specification/compute/resource-manager&#34;&gt;https://github.com/Azure/azure-rest-api-specs/tree/master/specification/compute/resource-manager&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;SDK Generator: &lt;a href=&#34;https://github.com/Azure/autorest&#34;&gt;https://github.com/Azure/autorest&lt;/a&gt;, &lt;a href=&#34;https://github.com/Azure/autorest/blob/master/docs/trampoline.md&#34;&gt;https://github.com/Azure/autorest/blob/master/docs/trampoline.md&lt;/a&gt;, &lt;a href=&#34;https://github.com/Azure/azure-rest-api-specs/tree/master/specification/compute/resource-manager&#34;&gt;https://github.com/Azure/azure-rest-api-specs/tree/master/specification/compute/resource-manager&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
 &lt;li&gt;AWS:
 &lt;ul&gt;
-&lt;li&gt;Specification Location: &lt;a href=&#34;https://github.com/boto/boto3/tree/master/boto3/data,&#34;&gt;https://github.com/boto/boto3/tree/master/boto3/data,&lt;/a&gt; &lt;a href=&#34;https://github.com/aws/aws-sdk-js/blob/master/apis,&#34;&gt;https://github.com/aws/aws-sdk-js/blob/master/apis,&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Specification Location: &lt;a href=&#34;https://github.com/boto/boto3/tree/master/boto3/data&#34;&gt;https://github.com/boto/boto3/tree/master/boto3/data&lt;/a&gt;, &lt;a href=&#34;https://github.com/aws/aws-sdk-js/blob/master/apis&#34;&gt;https://github.com/aws/aws-sdk-js/blob/master/apis&lt;/a&gt;,&lt;/li&gt;
 &lt;li&gt;SDK Generator: It appears they manually define the &amp;ldquo;apis&amp;rdquo; and SDK methods using JSON and use that during generation&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
 &lt;li&gt;GCP:
 &lt;ul&gt;
 &lt;li&gt;Specification Location: &lt;a href=&#34;https://github.com/googleapis/googleapis&#34;&gt;https://github.com/googleapis/googleapis&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;SDK Generator: &lt;a href=&#34;https://google.aip.dev/client-libraries/4210,&#34;&gt;https://google.aip.dev/client-libraries/4210,&lt;/a&gt; &lt;a href=&#34;https://github.com/googleapis/gapic-generator,&#34;&gt;https://github.com/googleapis/gapic-generator,&lt;/a&gt; &lt;a href=&#34;https://github.com/googleapis/gapic-generator-python&#34;&gt;https://github.com/googleapis/gapic-generator-python&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;SDK Generator: &lt;a href=&#34;https://google.aip.dev/client-libraries/4210&#34;&gt;https://google.aip.dev/client-libraries/4210&lt;/a&gt;, &lt;a href=&#34;https://github.com/googleapis/gapic-generator&#34;&gt;https://github.com/googleapis/gapic-generator&lt;/a&gt;, &lt;a href=&#34;https://github.com/googleapis/gapic-generator-python&#34;&gt;https://github.com/googleapis/gapic-generator-python&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
 &lt;li&gt;Kubernetes
 &lt;ul&gt;
-&lt;li&gt;Specification Location: &lt;a href=&#34;https://github.com/kubernetes/kubernetes/tree/master/api/openapi-spec,&#34;&gt;https://github.com/kubernetes/kubernetes/tree/master/api/openapi-spec,&lt;/a&gt; &lt;a href=&#34;https://github.com/kubernetes-client&#34;&gt;https://github.com/kubernetes-client&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Specification Location: &lt;a href=&#34;https://github.com/kubernetes/kubernetes/tree/master/api/openapi-spec&#34;&gt;https://github.com/kubernetes/kubernetes/tree/master/api/openapi-spec&lt;/a&gt;, &lt;a href=&#34;https://github.com/kubernetes-client&#34;&gt;https://github.com/kubernetes-client&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;SDK Generator: It looks like they might be using openapi-generator with their own customization. Here are the scripts they are using to invoke the generator &lt;a href=&#34;https://github.com/kubernetes-client/gen&#34;&gt;https://github.com/kubernetes-client/gen&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
