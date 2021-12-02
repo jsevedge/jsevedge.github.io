@@ -39,7 +39,7 @@ Let&rsquo;s say we are responsible for the usability of a SaaS service at XYZ co
 Problem Statement
 Let&rsquo;s say we are responsible for the usability of a SaaS service at XYZ company which has a RESTful API, and since this service is taking off we have begun to get requests for a better developer user experience (UX)."><meta itemprop="datePublished" content="2021-12-01T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2021-12-01T00:00:00+00:00" />
-<meta itemprop="wordCount" content="1179">
+<meta itemprop="wordCount" content="1178">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="SDK Generation from an OpenAPI Specification File"/>
 <meta name="twitter:description" content="Recently I spent a fair amount of time exploring the SDK generation space for a prototype our team was building at my current employer. Along the way I captured a few thoughts which I will break down here about what SDK generation is and some ways to go about it. Let&rsquo;s get some context first by starting with a problem statement.
@@ -156,7 +156,7 @@ Let&rsquo;s say we are responsible for the usability of a SaaS service at XYZ co
 
       
         <span class="f6 mv4 dib tracked"> - 6 minutes read</span>
-        <span class="f6 mv4 dib tracked"> - 1179 words</span>
+        <span class="f6 mv4 dib tracked"> - 1178 words</span>
       
     </header>
     <div class="nested-copy-line-height lh-copy serif f4 nested-links nested-img mid-gray center w-100 w-75-ns"><ul class="pa0">
@@ -199,7 +199,7 @@ graph TD;
 <p>The technical issue with this pattern of course is how to propagate out changes that occur in the core competencies to all the upstream bindings and external integration points automagically.  The assumption is in most cases it would not be feasible both from a manpower and delivery management perspective to try and do this without tooling and automation.  So let&rsquo;s take some time to think about SDK generation since that is the set of bindings immediately upstream of the core APIs.</p>
 <p><em>Future Post</em>: Once you have the SDK bindings problem solved you can use those in Terraform/Ansible and tackle the problem of if/how to automate updates to those providers/modules.  One step at a time though!</p>
 <p><strong>Existing SDK Generation Tooling</strong></p>
-<p>Most SDK generation tooling research starts by googling &ldquo;SDK Generation Tool&rdquo; and ends with finding <a href="https://github.com/OpenAPITools/openapi-generator">OpenAPI Generator</a>, which is listed on <a href="https://openapi.tools/#sdk">openapi.tools</a>.  OpenAPI Generator is probably the the most popular open-source OpenAPI based SDK generator available, it was a fork of the original <a href="https://swagger.io/tools/swagger-codegen/">Swagger CodeGen</a>.</p>
+<p>Most SDK generation tooling research starts by googling &ldquo;SDK Generation Tool&rdquo; and ends with finding <a href="https://github.com/OpenAPITools/openapi-generator">OpenAPI Generator</a>, which is listed on <a href="https://openapi.tools/#sdk">openapi.tools</a>.  OpenAPI Generator is probably the most popular open-source OpenAPI based SDK generator available, it was a fork of the original <a href="https://swagger.io/tools/swagger-codegen/">Swagger CodeGen</a>.</p>
 <p>If you use one of these common generators they take an <a href="https://www.openapis.org">OpenAPI</a> specification file which describes the service API endpoints in as much detail as you like and uses common properties such as HTTP methods, HTTP uri and so on to generate bindings for 1+ programming languages.  If the default output works for you without additional customization for company branding, etc. you can stop here.  If you either don&rsquo;t want to learn how to customize those bindings (see <a href="https://openapi-generator.tech/docs/templating/">OpenAPI Generator templating</a>) or you want to understand how SDK generation works in more detail let&rsquo;s dive into the details.</p>
 <p><strong>Building an SDK Generator</strong></p>
 <p>In this section let&rsquo;s walk through the steps I took to go from an OpenAPI specification document to a working set of python client bindings.</p>
