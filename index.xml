@@ -8,7 +8,253 @@
     <language>en-us</language>
     <managingEditor>jjesc1031@gmail.com (James Sevedge)</managingEditor>
     <webMaster>jjesc1031@gmail.com (James Sevedge)</webMaster>
-    <lastBuildDate>Tue, 09 Nov 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://jamessevedge.com/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 01 Dec 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://jamessevedge.com/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>SDK Generation from an OpenAPI Specification File</title>
+      <link>https://jamessevedge.com/articles/sdk-generation-from-an-openapi-specification-file/</link>
+      <pubDate>Wed, 01 Dec 2021 00:00:00 +0000</pubDate>
+      <author>jjesc1031@gmail.com (James Sevedge)</author>
+      <guid>https://jamessevedge.com/articles/sdk-generation-from-an-openapi-specification-file/</guid>
+      <description>&lt;p&gt;Recently I spent a fair amount of time exploring the SDK generation space for a prototype our team was building at my current employer.  Along the way I captured a few thoughts which I will break down here about what SDK generation is and some ways to go about it.  Let&amp;rsquo;s get some context first by starting with a problem statement.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Problem Statement&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Let&amp;rsquo;s say we are responsible for the usability of a SaaS service at XYZ company which has a RESTful API, and since this service is taking off we have begun to get requests for a better developer user experience (UX).  Looking to peers in the industry with similar services a common composability pattern emerges, specifically something such as the following.&lt;/p&gt;
+&lt;script src=&#34;https://unpkg.com/mermaid@8.5.1/dist/mermaid.min.js&#34;&gt;&lt;/script&gt;
+
+&lt;script&gt;
+    mermaid.initialize({ 
+        theme: &#39;dark&#39;,
+        maxWidth: true
+    });
+&lt;/script&gt;
+
+&lt;pre class=&#34;mermaid&#34; align=&#34;center&#34;&gt;
+graph TD;
+    api_service[&#34;Native API Service (Imperative)&#34;];
+    api_service_declarative[&#34;Native API Service (Declarative)&#34;];
+    sdk_python[&#34;SDK Binding (Python)&#34;];
+    sdk_go[&#34;SDK Binding (Go)&#34;];
+    sdk_js[&#34;SDK Binding (Javascript)&#34;];
+    cli[&#34;CLI (written in Go)&#34;];
+    terraform[&#34;Terraform (written in Go)&#34;];
+    ansible[&#34;Ansible (written in Python)&#34;];
+    api_service_declarative --&gt; api_service;
+    sdk_python --&gt; api_service;
+    sdk_python --&gt; api_service_declarative;
+    sdk_go--&gt; api_service;
+    sdk_go --&gt; api_service_declarative;
+    sdk_js--&gt; api_service;
+    sdk_js --&gt; api_service_declarative;
+    cli --&gt; sdk_go;
+    terraform --&gt; sdk_go;
+    ansible --&gt; sdk_python;
+&lt;/pre&gt;
+&lt;p&gt;This pattern is used by most of the major SaaS providers, to varying degrees of maturity.  It allows the developer UX to naturally evolve out and away from the core competencies (native API service + a declarative API service for companies that understand the customer value proposition of a declarative model and choose to provide that experience natively) to whatever integration point makes the most sense for the consumer of the service.&lt;/p&gt;
+&lt;p&gt;The technical issue with this pattern of course is how to propagate out changes that occur in the core competencies to all the upstream bindings and external integration points automagically.  The assumption is in most cases it would not be feasible both from a manpower and delivery management perspective to try and do this without tooling and automation.  So let&amp;rsquo;s take some time to think about SDK generation since that is the set of bindings immediately upstream of the core APIs.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Future Post&lt;/em&gt;: Once you have the SDK bindings problem solved you can use those in Terraform/Ansible and tackle the problem of if/how to automate updates to those providers/modules.  One step at a time though!&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Existing SDK Generation Tooling&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Most SDK generation tooling research starts by googling &amp;ldquo;SDK Generation Tool&amp;rdquo; and ends with finding &lt;a href=&#34;https://github.com/OpenAPITools/openapi-generator&#34;&gt;OpenAPI Generator&lt;/a&gt;, which is listed on &lt;a href=&#34;https://openapi.tools/#sdk&#34;&gt;openapi.tools&lt;/a&gt;.  OpenAPI Generator is probably the the most popular open-source OpenAPI based SDK generator available, it was a fork of the original &lt;a href=&#34;https://swagger.io/tools/swagger-codegen/&#34;&gt;Swagger CodeGen&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;If you use one of these common generators they take an &lt;a href=&#34;https://www.openapis.org&#34;&gt;OpenAPI&lt;/a&gt; specification file which describes the service API endpoints in as much detail as you like and uses common properties such as HTTP methods, HTTP uri and so on to generate bindings for 1+ programming languages.  If the default output works for you without additional customization for company branding, etc. you can stop here.  If you either don&amp;rsquo;t want to learn how to customize those bindings (see &lt;a href=&#34;https://openapi-generator.tech/docs/templating/&#34;&gt;OpenAPI Generator templating&lt;/a&gt;) or you want to understand how SDK generation works in more detail let&amp;rsquo;s dive into the details.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Building an SDK Generator&lt;/strong&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Given a simple OpenAPI specification document&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;openapi&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;3.0.0&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;info&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;title&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Example API Specification&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;description&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Example Description&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;version&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;1.0.0&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;servers&lt;/span&gt;:
+- &lt;span style=&#34;color:#f92672&#34;&gt;url&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;https://192.0.2.10&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;description&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Mock Server&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;paths&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;/applications&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;get&lt;/span&gt;:
+      &lt;span style=&#34;color:#f92672&#34;&gt;summary&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;List all applications&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;description&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;List all applications&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;operationId&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;getApplications&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;tags&lt;/span&gt;:
+        - &lt;span style=&#34;color:#ae81ff&#34;&gt;Application&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;responses&lt;/span&gt;:
+        &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#39;200&amp;#39;&lt;/span&gt;:
+          &lt;span style=&#34;color:#f92672&#34;&gt;description&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;OK&lt;/span&gt;
+          &lt;span style=&#34;color:#f92672&#34;&gt;content&lt;/span&gt;:
+            &lt;span style=&#34;color:#f92672&#34;&gt;application/json&lt;/span&gt;:
+              &lt;span style=&#34;color:#f92672&#34;&gt;schema&lt;/span&gt;:
+                &lt;span style=&#34;color:#f92672&#34;&gt;type&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;array&lt;/span&gt;
+                &lt;span style=&#34;color:#f92672&#34;&gt;items&lt;/span&gt;:
+                  &lt;span style=&#34;color:#f92672&#34;&gt;type&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;object&lt;/span&gt;
+                  &lt;span style=&#34;color:#f92672&#34;&gt;properties&lt;/span&gt;:
+                    &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;:
+                      &lt;span style=&#34;color:#f92672&#34;&gt;type&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;string&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;put&lt;/span&gt;:
+      &lt;span style=&#34;color:#f92672&#34;&gt;summary&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Add a new application&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;description&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Add a new application&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;operationId&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;createApplication&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;tags&lt;/span&gt;:
+        - &lt;span style=&#34;color:#ae81ff&#34;&gt;Application&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;requestBody&lt;/span&gt;:
+        &lt;span style=&#34;color:#f92672&#34;&gt;description&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Example Description&lt;/span&gt;
+        &lt;span style=&#34;color:#f92672&#34;&gt;required&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;true&lt;/span&gt;
+        &lt;span style=&#34;color:#f92672&#34;&gt;content&lt;/span&gt;:
+          &lt;span style=&#34;color:#f92672&#34;&gt;application/json&lt;/span&gt;:
+            &lt;span style=&#34;color:#f92672&#34;&gt;schema&lt;/span&gt;:
+              &lt;span style=&#34;color:#f92672&#34;&gt;type&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;object&lt;/span&gt;
+              &lt;span style=&#34;color:#f92672&#34;&gt;properties&lt;/span&gt;:
+                &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;:
+                  &lt;span style=&#34;color:#f92672&#34;&gt;type&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;string&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;responses&lt;/span&gt;:
+          &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#39;200&amp;#39;&lt;/span&gt;:
+            &lt;span style=&#34;color:#f92672&#34;&gt;description&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;OK&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;Parse and normalize into a model an SDK generator (and cooresponding templates) can understand&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;packageMetadata&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Example API Specification&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;version&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;1.0.0&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;description&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Example Description&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;globalConfiguration&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;host&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;https://192.0.2.10&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;namespaces&lt;/span&gt;:
+    - &lt;span style=&#34;color:#f92672&#34;&gt;namespace&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Application&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;operations&lt;/span&gt;:
+        - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;getApplications&lt;/span&gt;
+          &lt;span style=&#34;color:#f92672&#34;&gt;description&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;List all applications&lt;/span&gt;
+          &lt;span style=&#34;color:#f92672&#34;&gt;transportSettings&lt;/span&gt;:
+            &lt;span style=&#34;color:#f92672&#34;&gt;method&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;GET&amp;#39;&lt;/span&gt;
+            &lt;span style=&#34;color:#f92672&#34;&gt;url&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;/applications&lt;/span&gt;
+        - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;createApplication&lt;/span&gt;
+          &lt;span style=&#34;color:#f92672&#34;&gt;description&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Add a new application&lt;/span&gt;
+          &lt;span style=&#34;color:#f92672&#34;&gt;transportSettings&lt;/span&gt;:
+            &lt;span style=&#34;color:#f92672&#34;&gt;method&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;PUT&amp;#39;&lt;/span&gt;
+            &lt;span style=&#34;color:#f92672&#34;&gt;url&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;/applications&lt;/span&gt;
+            &lt;span style=&#34;color:#f92672&#34;&gt;requestBodyRequired&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;true&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;3&#34;&gt;
+&lt;li&gt;Render that generator model against a language-specific template set (Mustache, etc.), in this case Python&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code class=&#34;language-mustache&#34; data-lang=&#34;mustache&#34;&gt;&amp;quot;&amp;quot;&amp;quot;{{namespace}} Client&amp;quot;&amp;quot;&amp;quot;
+
+from mysdk.base_clients import BaseFeatureClient
+
+class {{namespace}}Client(BaseFeatureClient):
+    &amp;quot;&amp;quot;&amp;quot;{{namespace}} Client &amp;quot;&amp;quot;&amp;quot;
+
+    def __init__(self, client, **kwargs):
+        &amp;quot;&amp;quot;&amp;quot;Initialization &amp;quot;&amp;quot;&amp;quot;
+
+        super({{namespace}}Client, self).__init__(
+            client,
+            logger_name=__name__,
+            uri=&#39;/&#39;
+        )
+
+    {{#operations}}
+    def {{name}}(self, **kwargs):
+        &amp;quot;&amp;quot;&amp;quot;{{description}}&amp;quot;&amp;quot;&amp;quot;
+
+        {{#transportSettings.requestBodyRequired}}
+        return self._make_request(
+            method=&#39;{{transportSettings.method}}&#39;,
+            uri=&#39;{{transportSettings.url}}&#39;,
+            body=kwargs.pop(&#39;config&#39;, None)
+        )
+        {{/transportSettings.requestBodyRequired}}
+        {{^transportSettings.requestBodyRequired}}
+        return self._make_request(
+            method=&#39;{{transportSettings.method}}&#39;,
+            uri=&#39;{{transportSettings.url}}&#39;
+        )
+        {{/transportSettings.requestBodyRequired}}
+
+    {{/operations}}
+&lt;/code&gt;&lt;/pre&gt;&lt;ol start=&#34;4&#34;&gt;
+&lt;li&gt;The render operation outputs the following functional SDK with a service client per namespace (group/tag/etc)&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# application.py&lt;/span&gt;
+&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&amp;#34;&amp;#34;Application Client&amp;#34;&amp;#34;&amp;#34;&lt;/span&gt;
+
+&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; mysdk.base_clients &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; BaseFeatureClient
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;ApplicationClient&lt;/span&gt;(BaseFeatureClient):
+    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&amp;#34;&amp;#34;Application Client &amp;#34;&amp;#34;&amp;#34;&lt;/span&gt;
+
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; __init__(self, client, &lt;span style=&#34;color:#f92672&#34;&gt;**&lt;/span&gt;kwargs):
+        &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&amp;#34;&amp;#34;Initialization &amp;#34;&amp;#34;&amp;#34;&lt;/span&gt;
+
+        super(ApplicationClient, self)&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;__init__(
+            client,
+            logger_name&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;__name__,
+            uri&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;/&amp;#39;&lt;/span&gt;
+        )
+
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;get_applications&lt;/span&gt;(self, &lt;span style=&#34;color:#f92672&#34;&gt;**&lt;/span&gt;kwargs):
+        &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&amp;#34;&amp;#34;List all applications&amp;#34;&amp;#34;&amp;#34;&lt;/span&gt;
+
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;_make_request(
+            method&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;GET&amp;#39;&lt;/span&gt;,
+            uri&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;/applications&amp;#39;&lt;/span&gt;
+        )
+
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;create_application&lt;/span&gt;(self, &lt;span style=&#34;color:#f92672&#34;&gt;**&lt;/span&gt;kwargs):
+        &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&amp;#34;&amp;#34;Add a new application&amp;#34;&amp;#34;&amp;#34;&lt;/span&gt;
+
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;_make_request(
+            method&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;PUT&amp;#39;&lt;/span&gt;,
+            uri&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;/applications&amp;#39;&lt;/span&gt;,
+            body&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;kwargs&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;pop(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;config&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color:#66d9ef&#34;&gt;None&lt;/span&gt;)
+        )
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;5&#34;&gt;
+&lt;li&gt;Ship it!&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Seems pretty easy right?  Let&amp;rsquo;s look at some of the mappings:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;path.method.tags[0]&lt;/code&gt; -&amp;gt; Class name (operation/method grouping)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;path&lt;/code&gt; -&amp;gt; Method transport URI&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;path.method&lt;/code&gt; -&amp;gt; Method transport verb&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;path.method.operationId&lt;/code&gt; -&amp;gt; Method signature (name)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;path.method.description&lt;/code&gt; -&amp;gt; Method description&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Of course this is the bare minimum necessary to generate a binding that could be useful, some other considerations that immediately present themselves are:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;What is necessary to define request/response interfaces for strongly typed languages?&lt;/li&gt;
+&lt;li&gt;Do management clients (auth, low-level transport) need to be auto-generated?  If so what additional properties in the authentication endpoints (Basic, OAuth) OpenAPI specification files will need to be specified?&lt;/li&gt;
+&lt;li&gt;How should APIs with support for async operations be handled?&lt;/li&gt;
+&lt;li&gt;How would additional information such as namespace level usage examples be codified?&lt;/li&gt;
+&lt;li&gt;How much logic should be considered MVP in the core package, such as authentication token refresh, transport level retries and so on?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Most of this initial set of problems are solvable simply by determining the minimal set of properties necessary for each endpoint to generate the appropriate generation model, enforcing that set of properties with a linter and then creating the appropriate templates/tooling to make use of that model.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Industry SDK Generation Examples&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Here are some examples of popular industry API providers and the approach they took to SDK generation.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Microsoft Azure:
+&lt;ul&gt;
+&lt;li&gt;Specification Location: &lt;a href=&#34;https://github.com/Azure/azure-rest-api-specs&#34;&gt;https://github.com/Azure/azure-rest-api-specs&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;SDK Generator: &lt;a href=&#34;https://github.com/Azure/autorest,&#34;&gt;https://github.com/Azure/autorest,&lt;/a&gt; &lt;a href=&#34;https://github.com/Azure/autorest/blob/master/docs/trampoline.md,&#34;&gt;https://github.com/Azure/autorest/blob/master/docs/trampoline.md,&lt;/a&gt; &lt;a href=&#34;https://github.com/Azure/azure-rest-api-specs/tree/master/specification/compute/resource-manager&#34;&gt;https://github.com/Azure/azure-rest-api-specs/tree/master/specification/compute/resource-manager&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;AWS:
+&lt;ul&gt;
+&lt;li&gt;Specification Location: &lt;a href=&#34;https://github.com/boto/boto3/tree/master/boto3/data,&#34;&gt;https://github.com/boto/boto3/tree/master/boto3/data,&lt;/a&gt; &lt;a href=&#34;https://github.com/aws/aws-sdk-js/blob/master/apis,&#34;&gt;https://github.com/aws/aws-sdk-js/blob/master/apis,&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;SDK Generator: It appears they manually define the &amp;ldquo;apis&amp;rdquo; and SDK methods using JSON and use that during generation&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;GCP:
+&lt;ul&gt;
+&lt;li&gt;Specification Location: &lt;a href=&#34;https://github.com/googleapis/googleapis&#34;&gt;https://github.com/googleapis/googleapis&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;SDK Generator: &lt;a href=&#34;https://google.aip.dev/client-libraries/4210,&#34;&gt;https://google.aip.dev/client-libraries/4210,&lt;/a&gt; &lt;a href=&#34;https://github.com/googleapis/gapic-generator,&#34;&gt;https://github.com/googleapis/gapic-generator,&lt;/a&gt; &lt;a href=&#34;https://github.com/googleapis/gapic-generator-python&#34;&gt;https://github.com/googleapis/gapic-generator-python&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Kubernetes
+&lt;ul&gt;
+&lt;li&gt;Specification Location: &lt;a href=&#34;https://github.com/kubernetes/kubernetes/tree/master/api/openapi-spec,&#34;&gt;https://github.com/kubernetes/kubernetes/tree/master/api/openapi-spec,&lt;/a&gt; &lt;a href=&#34;https://github.com/kubernetes-client&#34;&gt;https://github.com/kubernetes-client&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;SDK Generator: It looks like they might be using openapi-generator with their own customization. Here are the scripts they are using to invoke the generator &lt;a href=&#34;https://github.com/kubernetes-client/gen&#34;&gt;https://github.com/kubernetes-client/gen&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Final Thoughts&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;As previously stated the deeper you go down the rabbit hole the more you have to consider, but getting a working prototype of a custom SDK generator is not that difficult.  Most of the industry examples provided above ended up going down that route to provide the best developer UX possible for their customers since they have the scale and resourcing necessary.&lt;/p&gt;
+</description>
+    </item>
+    
     <item>
       <title>An Excercise In Refactoring</title>
       <link>https://jamessevedge.com/articles/an-excercise-in-refactoring/</link>

@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+    <title>SDK Generation from an OpenAPI Specification File | James Sevedge</title>
+
+    <meta name="viewport" content="width=device-width,minimum-scale=1">
+    <meta name="generator" content="Hugo 0.87.0" />
+    
+      <META NAME="ROBOTS" CONTENT="INDEX, FOLLOW">
+    
+
+    
+    
+      <link href="/dist/css/app.1cb140d8ba31d5b2f1114537dd04802a.css" rel="stylesheet">
+    
+
+    
+
+    
+      
+    
+
+    
+    
+    <meta property="og:title" content="SDK Generation from an OpenAPI Specification File" />
+<meta property="og:description" content="Recently I spent a fair amount of time exploring the SDK generation space for a prototype our team was building at my current employer. Along the way I captured a few thoughts which I will break down here about what SDK generation is and some ways to go about it. Let&rsquo;s get some context first by starting with a problem statement.
+Problem Statement
+Let&rsquo;s say we are responsible for the usability of a SaaS service at XYZ company which has a RESTful API, and since this service is taking off we have begun to get requests for a better developer user experience (UX)." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://jamessevedge.com/articles/sdk-generation-from-an-openapi-specification-file/" /><meta property="article:section" content="articles" />
+<meta property="article:published_time" content="2021-12-01T00:00:00+00:00" />
+<meta property="article:modified_time" content="2021-12-01T00:00:00+00:00" />
+
+<meta itemprop="name" content="SDK Generation from an OpenAPI Specification File">
+<meta itemprop="description" content="Recently I spent a fair amount of time exploring the SDK generation space for a prototype our team was building at my current employer. Along the way I captured a few thoughts which I will break down here about what SDK generation is and some ways to go about it. Let&rsquo;s get some context first by starting with a problem statement.
+Problem Statement
+Let&rsquo;s say we are responsible for the usability of a SaaS service at XYZ company which has a RESTful API, and since this service is taking off we have begun to get requests for a better developer user experience (UX)."><meta itemprop="datePublished" content="2021-12-01T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2021-12-01T00:00:00+00:00" />
+<meta itemprop="wordCount" content="1154">
+<meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="SDK Generation from an OpenAPI Specification File"/>
+<meta name="twitter:description" content="Recently I spent a fair amount of time exploring the SDK generation space for a prototype our team was building at my current employer. Along the way I captured a few thoughts which I will break down here about what SDK generation is and some ways to go about it. Let&rsquo;s get some context first by starting with a problem statement.
+Problem Statement
+Let&rsquo;s say we are responsible for the usability of a SaaS service at XYZ company which has a RESTful API, and since this service is taking off we have begun to get requests for a better developer user experience (UX)."/>
+
+      
+        
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-Q5B427HWSJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-Q5B427HWSJ');
+</script>
+      
+    
+  </head>
+
+  <body class="ma0 avenir bg-near-white production">
+
+    
+  
+
+  <header>
+    <div class="bg-dark-gray">
+      <nav class="pv3 ph3 ph4-ns" role="navigation">
+  <div class="flex-l justify-between items-center center">
+    <a href="https://jamessevedge.com" class="f3 fw2 hover-white no-underline white-90 dib">
+      James Sevedge
+    </a>
+    <div class="flex-l items-center">
+      
+
+      
+        <ul class="pl0 mr3">
+          
+          <li class="list f5 f4-ns fw4 dib pr3">
+            <a class="hover-white no-underline white-90" href="/articles/" title="Articles page">
+              Articles
+            </a>
+          </li>
+          
+          <li class="list f5 f4-ns fw4 dib pr3">
+            <a class="hover-white no-underline white-90" href="/about/" title="About page">
+              About
+            </a>
+          </li>
+          
+          <li class="list f5 f4-ns fw4 dib pr3">
+            <a class="hover-white no-underline white-90" href="/contact/" title="Contact page">
+              Contact
+            </a>
+          </li>
+          
+        </ul>
+      
+      
+      
+    </div>
+  </div>
+</nav>
+
+    </div>
+  </header>
+
+
+
+    <main class="pb7" role="main">
+      
+  
+  <article class="flex-wrap w-100 ph4">
+    <header class="mt4 w-100 tc">
+      <aside class="instapaper_ignoref b helvetica tracked">
+        ARTICLES
+      </aside>
+      
+
+
+
+
+  <div id="sharing" class="mt3">
+
+    
+    
+    <a href="https://twitter.com/share?url=https://jamessevedge.com/articles/sdk-generation-from-an-openapi-specification-file/&amp;text=SDK%20Generation%20from%20an%20OpenAPI%20Specification%20File" class="twitter no-underline" aria-label="share on Twitter">
+      <svg height="32px"  style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M37.167,22.283c-2.619,0.953-4.274,3.411-4.086,6.101  l0.063,1.038l-1.048-0.127c-3.813-0.487-7.145-2.139-9.974-4.915l-1.383-1.377l-0.356,1.017c-0.754,2.267-0.272,4.661,1.299,6.271  c0.838,0.89,0.649,1.017-0.796,0.487c-0.503-0.169-0.943-0.296-0.985-0.233c-0.146,0.149,0.356,2.076,0.754,2.839  c0.545,1.06,1.655,2.097,2.871,2.712l1.027,0.487l-1.215,0.021c-1.173,0-1.215,0.021-1.089,0.467  c0.419,1.377,2.074,2.839,3.918,3.475l1.299,0.444l-1.131,0.678c-1.676,0.976-3.646,1.526-5.616,1.568  C19.775,43.256,19,43.341,19,43.405c0,0.211,2.557,1.397,4.044,1.864c4.463,1.377,9.765,0.783,13.746-1.568  c2.829-1.673,5.657-5,6.978-8.221c0.713-1.716,1.425-4.851,1.425-6.354c0-0.975,0.063-1.102,1.236-2.267  c0.692-0.678,1.341-1.419,1.467-1.631c0.21-0.403,0.188-0.403-0.88-0.043c-1.781,0.636-2.033,0.551-1.152-0.402  c0.649-0.678,1.425-1.907,1.425-2.267c0-0.063-0.314,0.042-0.671,0.233c-0.377,0.212-1.215,0.53-1.844,0.72l-1.131,0.361l-1.027-0.7  c-0.566-0.381-1.361-0.805-1.781-0.932C39.766,21.902,38.131,21.944,37.167,22.283z M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4  s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/></svg>
+
+    </a>
+
+    
+    <a href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https://jamessevedge.com/articles/sdk-generation-from-an-openapi-specification-file/&amp;title=SDK%20Generation%20from%20an%20OpenAPI%20Specification%20File" class="linkedin no-underline" aria-label="share on LinkedIn">
+      <svg  height="32px"  style="enable-background:new 0 0 65 65;" version="1.1" viewBox="0 0 65 65" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <path d="M50.837,48.137V36.425c0-6.275-3.35-9.195-7.816-9.195  c-3.604,0-5.219,1.983-6.119,3.374V27.71h-6.79c0.09,1.917,0,20.427,0,20.427h6.79V36.729c0-0.609,0.044-1.219,0.224-1.655  c0.49-1.22,1.607-2.483,3.482-2.483c2.458,0,3.44,1.873,3.44,4.618v10.929H50.837z M22.959,24.922c2.367,0,3.842-1.57,3.842-3.531  c-0.044-2.003-1.475-3.528-3.797-3.528s-3.841,1.524-3.841,3.528c0,1.961,1.474,3.531,3.753,3.531H22.959z M34,64  C17.432,64,4,50.568,4,34C4,17.431,17.432,4,34,4s30,13.431,30,30C64,50.568,50.568,64,34,64z M26.354,48.137V27.71h-6.789v20.427  H26.354z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/>
+</svg>
+
+    </a>
+  </div>
+
+
+      <h1 class="f1 athelas mt3 mb1">SDK Generation from an OpenAPI Specification File</h1>
+      
+      <p class="tracked">
+          By <strong>
+          
+              James Sevedge
+          
+          </strong>
+      </p>
+      
+
+      <time class="f6 mv4 dib tracked" datetime="2021-12-01T00:00:00Z">December 1, 2021</time>
+
+      
+        <span class="f6 mv4 dib tracked"> - 6 minutes read</span>
+        <span class="f6 mv4 dib tracked"> - 1154 words</span>
+      
+    </header>
+    <div class="nested-copy-line-height lh-copy serif f4 nested-links nested-img mid-gray center w-100 w-75-ns"><ul class="pa0">
+  
+</ul>
+<p>Recently I spent a fair amount of time exploring the SDK generation space for a prototype our team was building at my current employer.  Along the way I captured a few thoughts which I will break down here about what SDK generation is and some ways to go about it.  Let&rsquo;s get some context first by starting with a problem statement.</p>
+<p><strong>Problem Statement</strong></p>
+<p>Let&rsquo;s say we are responsible for the usability of a SaaS service at XYZ company which has a RESTful API, and since this service is taking off we have begun to get requests for a better developer user experience (UX).  Looking to peers in the industry with similar services a common composability pattern emerges, specifically something such as the following.</p>
+<script src="https://unpkg.com/mermaid@8.5.1/dist/mermaid.min.js"></script>
+
+<script>
+    mermaid.initialize({ 
+        theme: 'dark',
+        maxWidth: true
+    });
+</script>
+
+<pre class="mermaid" align="center">
+graph TD;
+    api_service["Native API Service (Imperative)"];
+    api_service_declarative["Native API Service (Declarative)"];
+    sdk_python["SDK Binding (Python)"];
+    sdk_go["SDK Binding (Go)"];
+    sdk_js["SDK Binding (Javascript)"];
+    cli["CLI (written in Go)"];
+    terraform["Terraform (written in Go)"];
+    ansible["Ansible (written in Python)"];
+    api_service_declarative --> api_service;
+    sdk_python --> api_service;
+    sdk_python --> api_service_declarative;
+    sdk_go--> api_service;
+    sdk_go --> api_service_declarative;
+    sdk_js--> api_service;
+    sdk_js --> api_service_declarative;
+    cli --> sdk_go;
+    terraform --> sdk_go;
+    ansible --> sdk_python;
+</pre>
+<p>This pattern is used by most of the major SaaS providers, to varying degrees of maturity.  It allows the developer UX to naturally evolve out and away from the core competencies (native API service + a declarative API service for companies that understand the customer value proposition of a declarative model and choose to provide that experience natively) to whatever integration point makes the most sense for the consumer of the service.</p>
+<p>The technical issue with this pattern of course is how to propagate out changes that occur in the core competencies to all the upstream bindings and external integration points automagically.  The assumption is in most cases it would not be feasible both from a manpower and delivery management perspective to try and do this without tooling and automation.  So let&rsquo;s take some time to think about SDK generation since that is the set of bindings immediately upstream of the core APIs.</p>
+<p><em>Future Post</em>: Once you have the SDK bindings problem solved you can use those in Terraform/Ansible and tackle the problem of if/how to automate updates to those providers/modules.  One step at a time though!</p>
+<p><strong>Existing SDK Generation Tooling</strong></p>
+<p>Most SDK generation tooling research starts by googling &ldquo;SDK Generation Tool&rdquo; and ends with finding <a href="https://github.com/OpenAPITools/openapi-generator">OpenAPI Generator</a>, which is listed on <a href="https://openapi.tools/#sdk">openapi.tools</a>.  OpenAPI Generator is probably the the most popular open-source OpenAPI based SDK generator available, it was a fork of the original <a href="https://swagger.io/tools/swagger-codegen/">Swagger CodeGen</a>.</p>
+<p>If you use one of these common generators they take an <a href="https://www.openapis.org">OpenAPI</a> specification file which describes the service API endpoints in as much detail as you like and uses common properties such as HTTP methods, HTTP uri and so on to generate bindings for 1+ programming languages.  If the default output works for you without additional customization for company branding, etc. you can stop here.  If you either don&rsquo;t want to learn how to customize those bindings (see <a href="https://openapi-generator.tech/docs/templating/">OpenAPI Generator templating</a>) or you want to understand how SDK generation works in more detail let&rsquo;s dive into the details.</p>
+<p><strong>Building an SDK Generator</strong></p>
+<ol>
+<li>Given a simple OpenAPI specification document</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">openapi</span>: <span style="color:#ae81ff">3.0.0</span>
+<span style="color:#f92672">info</span>:
+  <span style="color:#f92672">title</span>: <span style="color:#ae81ff">Example API Specification</span>
+  <span style="color:#f92672">description</span>: <span style="color:#ae81ff">Example Description</span>
+  <span style="color:#f92672">version</span>: <span style="color:#ae81ff">1.0.0</span>
+<span style="color:#f92672">servers</span>:
+- <span style="color:#f92672">url</span>: <span style="color:#ae81ff">https://192.0.2.10</span>
+  <span style="color:#f92672">description</span>: <span style="color:#ae81ff">Mock Server</span>
+<span style="color:#f92672">paths</span>:
+  <span style="color:#f92672">/applications</span>:
+    <span style="color:#f92672">get</span>:
+      <span style="color:#f92672">summary</span>: <span style="color:#ae81ff">List all applications</span>
+      <span style="color:#f92672">description</span>: <span style="color:#ae81ff">List all applications</span>
+      <span style="color:#f92672">operationId</span>: <span style="color:#ae81ff">getApplications</span>
+      <span style="color:#f92672">tags</span>:
+        - <span style="color:#ae81ff">Application</span>
+      <span style="color:#f92672">responses</span>:
+        <span style="color:#f92672">&#39;200&#39;</span>:
+          <span style="color:#f92672">description</span>: <span style="color:#ae81ff">OK</span>
+          <span style="color:#f92672">content</span>:
+            <span style="color:#f92672">application/json</span>:
+              <span style="color:#f92672">schema</span>:
+                <span style="color:#f92672">type</span>: <span style="color:#ae81ff">array</span>
+                <span style="color:#f92672">items</span>:
+                  <span style="color:#f92672">type</span>: <span style="color:#ae81ff">object</span>
+                  <span style="color:#f92672">properties</span>:
+                    <span style="color:#f92672">name</span>:
+                      <span style="color:#f92672">type</span>: <span style="color:#ae81ff">string</span>
+    <span style="color:#f92672">put</span>:
+      <span style="color:#f92672">summary</span>: <span style="color:#ae81ff">Add a new application</span>
+      <span style="color:#f92672">description</span>: <span style="color:#ae81ff">Add a new application</span>
+      <span style="color:#f92672">operationId</span>: <span style="color:#ae81ff">createApplication</span>
+      <span style="color:#f92672">tags</span>:
+        - <span style="color:#ae81ff">Application</span>
+      <span style="color:#f92672">requestBody</span>:
+        <span style="color:#f92672">description</span>: <span style="color:#ae81ff">Example Description</span>
+        <span style="color:#f92672">required</span>: <span style="color:#66d9ef">true</span>
+        <span style="color:#f92672">content</span>:
+          <span style="color:#f92672">application/json</span>:
+            <span style="color:#f92672">schema</span>:
+              <span style="color:#f92672">type</span>: <span style="color:#ae81ff">object</span>
+              <span style="color:#f92672">properties</span>:
+                <span style="color:#f92672">name</span>:
+                  <span style="color:#f92672">type</span>: <span style="color:#ae81ff">string</span>
+      <span style="color:#f92672">responses</span>:
+          <span style="color:#f92672">&#39;200&#39;</span>:
+            <span style="color:#f92672">description</span>: <span style="color:#ae81ff">OK</span>
+</code></pre></div><ol start="2">
+<li>Parse and normalize into a model an SDK generator (and cooresponding templates) can understand</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">packageMetadata</span>:
+    <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Example API Specification</span>
+    <span style="color:#f92672">version</span>: <span style="color:#ae81ff">1.0.0</span>
+    <span style="color:#f92672">description</span>: <span style="color:#ae81ff">Example Description</span>
+<span style="color:#f92672">globalConfiguration</span>:
+    <span style="color:#f92672">host</span>: <span style="color:#ae81ff">https://192.0.2.10</span>
+<span style="color:#f92672">namespaces</span>:
+    - <span style="color:#f92672">namespace</span>: <span style="color:#ae81ff">Application</span>
+      <span style="color:#f92672">operations</span>:
+        - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">getApplications</span>
+          <span style="color:#f92672">description</span>: <span style="color:#ae81ff">List all applications</span>
+          <span style="color:#f92672">transportSettings</span>:
+            <span style="color:#f92672">method</span>: <span style="color:#e6db74">&#39;GET&#39;</span>
+            <span style="color:#f92672">url</span>: <span style="color:#ae81ff">/applications</span>
+        - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">createApplication</span>
+          <span style="color:#f92672">description</span>: <span style="color:#ae81ff">Add a new application</span>
+          <span style="color:#f92672">transportSettings</span>:
+            <span style="color:#f92672">method</span>: <span style="color:#e6db74">&#39;PUT&#39;</span>
+            <span style="color:#f92672">url</span>: <span style="color:#ae81ff">/applications</span>
+            <span style="color:#f92672">requestBodyRequired</span>: <span style="color:#66d9ef">true</span>
+</code></pre></div><ol start="3">
+<li>Render that generator model against a language-specific template set (Mustache, etc.), in this case Python</li>
+</ol>
+<pre><code class="language-mustache" data-lang="mustache">&quot;&quot;&quot;{{namespace}} Client&quot;&quot;&quot;
+
+from mysdk.base_clients import BaseFeatureClient
+
+class {{namespace}}Client(BaseFeatureClient):
+    &quot;&quot;&quot;{{namespace}} Client &quot;&quot;&quot;
+
+    def __init__(self, client, **kwargs):
+        &quot;&quot;&quot;Initialization &quot;&quot;&quot;
+
+        super({{namespace}}Client, self).__init__(
+            client,
+            logger_name=__name__,
+            uri='/'
+        )
+
+    {{#operations}}
+    def {{name}}(self, **kwargs):
+        &quot;&quot;&quot;{{description}}&quot;&quot;&quot;
+
+        {{#transportSettings.requestBodyRequired}}
+        return self._make_request(
+            method='{{transportSettings.method}}',
+            uri='{{transportSettings.url}}',
+            body=kwargs.pop('config', None)
+        )
+        {{/transportSettings.requestBodyRequired}}
+        {{^transportSettings.requestBodyRequired}}
+        return self._make_request(
+            method='{{transportSettings.method}}',
+            uri='{{transportSettings.url}}'
+        )
+        {{/transportSettings.requestBodyRequired}}
+
+    {{/operations}}
+</code></pre><ol start="4">
+<li>The render operation outputs the following functional SDK with a service client per namespace (group/tag/etc)</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e"># application.py</span>
+<span style="color:#e6db74">&#34;&#34;&#34;Application Client&#34;&#34;&#34;</span>
+
+<span style="color:#f92672">from</span> mysdk.base_clients <span style="color:#f92672">import</span> BaseFeatureClient
+
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ApplicationClient</span>(BaseFeatureClient):
+    <span style="color:#e6db74">&#34;&#34;&#34;Application Client &#34;&#34;&#34;</span>
+
+    <span style="color:#66d9ef">def</span> __init__(self, client, <span style="color:#f92672">**</span>kwargs):
+        <span style="color:#e6db74">&#34;&#34;&#34;Initialization &#34;&#34;&#34;</span>
+
+        super(ApplicationClient, self)<span style="color:#f92672">.</span>__init__(
+            client,
+            logger_name<span style="color:#f92672">=</span>__name__,
+            uri<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;/&#39;</span>
+        )
+
+    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">get_applications</span>(self, <span style="color:#f92672">**</span>kwargs):
+        <span style="color:#e6db74">&#34;&#34;&#34;List all applications&#34;&#34;&#34;</span>
+
+        <span style="color:#66d9ef">return</span> self<span style="color:#f92672">.</span>_make_request(
+            method<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;GET&#39;</span>,
+            uri<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;/applications&#39;</span>
+        )
+
+    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">create_application</span>(self, <span style="color:#f92672">**</span>kwargs):
+        <span style="color:#e6db74">&#34;&#34;&#34;Add a new application&#34;&#34;&#34;</span>
+
+        <span style="color:#66d9ef">return</span> self<span style="color:#f92672">.</span>_make_request(
+            method<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;PUT&#39;</span>,
+            uri<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;/applications&#39;</span>,
+            body<span style="color:#f92672">=</span>kwargs<span style="color:#f92672">.</span>pop(<span style="color:#e6db74">&#39;config&#39;</span>, <span style="color:#66d9ef">None</span>)
+        )
+</code></pre></div><ol start="5">
+<li>Ship it!</li>
+</ol>
+<p>Seems pretty easy right?  Let&rsquo;s look at some of the mappings:</p>
+<ul>
+<li><code>path.method.tags[0]</code> -&gt; Class name (operation/method grouping)</li>
+<li><code>path</code> -&gt; Method transport URI</li>
+<li><code>path.method</code> -&gt; Method transport verb</li>
+<li><code>path.method.operationId</code> -&gt; Method signature (name)</li>
+<li><code>path.method.description</code> -&gt; Method description</li>
+</ul>
+<p>Of course this is the bare minimum necessary to generate a binding that could be useful, some other considerations that immediately present themselves are:</p>
+<ul>
+<li>What is necessary to define request/response interfaces for strongly typed languages?</li>
+<li>Do management clients (auth, low-level transport) need to be auto-generated?  If so what additional properties in the authentication endpoints (Basic, OAuth) OpenAPI specification files will need to be specified?</li>
+<li>How should APIs with support for async operations be handled?</li>
+<li>How would additional information such as namespace level usage examples be codified?</li>
+<li>How much logic should be considered MVP in the core package, such as authentication token refresh, transport level retries and so on?</li>
+</ul>
+<p>Most of this initial set of problems are solvable simply by determining the minimal set of properties necessary for each endpoint to generate the appropriate generation model, enforcing that set of properties with a linter and then creating the appropriate templates/tooling to make use of that model.</p>
+<p><strong>Industry SDK Generation Examples</strong></p>
+<p>Here are some examples of popular industry API providers and the approach they took to SDK generation.</p>
+<ul>
+<li>Microsoft Azure:
+<ul>
+<li>Specification Location: <a href="https://github.com/Azure/azure-rest-api-specs">https://github.com/Azure/azure-rest-api-specs</a></li>
+<li>SDK Generator: <a href="https://github.com/Azure/autorest,">https://github.com/Azure/autorest,</a> <a href="https://github.com/Azure/autorest/blob/master/docs/trampoline.md,">https://github.com/Azure/autorest/blob/master/docs/trampoline.md,</a> <a href="https://github.com/Azure/azure-rest-api-specs/tree/master/specification/compute/resource-manager">https://github.com/Azure/azure-rest-api-specs/tree/master/specification/compute/resource-manager</a></li>
+</ul>
+</li>
+<li>AWS:
+<ul>
+<li>Specification Location: <a href="https://github.com/boto/boto3/tree/master/boto3/data,">https://github.com/boto/boto3/tree/master/boto3/data,</a> <a href="https://github.com/aws/aws-sdk-js/blob/master/apis,">https://github.com/aws/aws-sdk-js/blob/master/apis,</a></li>
+<li>SDK Generator: It appears they manually define the &ldquo;apis&rdquo; and SDK methods using JSON and use that during generation</li>
+</ul>
+</li>
+<li>GCP:
+<ul>
+<li>Specification Location: <a href="https://github.com/googleapis/googleapis">https://github.com/googleapis/googleapis</a></li>
+<li>SDK Generator: <a href="https://google.aip.dev/client-libraries/4210,">https://google.aip.dev/client-libraries/4210,</a> <a href="https://github.com/googleapis/gapic-generator,">https://github.com/googleapis/gapic-generator,</a> <a href="https://github.com/googleapis/gapic-generator-python">https://github.com/googleapis/gapic-generator-python</a></li>
+</ul>
+</li>
+<li>Kubernetes
+<ul>
+<li>Specification Location: <a href="https://github.com/kubernetes/kubernetes/tree/master/api/openapi-spec,">https://github.com/kubernetes/kubernetes/tree/master/api/openapi-spec,</a> <a href="https://github.com/kubernetes-client">https://github.com/kubernetes-client</a></li>
+<li>SDK Generator: It looks like they might be using openapi-generator with their own customization. Here are the scripts they are using to invoke the generator <a href="https://github.com/kubernetes-client/gen">https://github.com/kubernetes-client/gen</a></li>
+</ul>
+</li>
+</ul>
+<p><strong>Final Thoughts</strong></p>
+<p>As previously stated the deeper you go down the rabbit hole the more you have to consider, but getting a working prototype of a custom SDK generator is not that difficult.  Most of the industry examples provided above ended up going down that route to provide the best developer UX possible for their customers since they have the scale and resourcing necessary.</p>
+</div>
+<link href="//cdn-images.mailchimp.com/embedcode/horizontal-slim-10_7.css" rel="stylesheet" type="text/css">
+<div id="mc_embed_signup" class="pt5">
+    <form action="https://jamessevedge.us20.list-manage.com/subscribe/post?u=3019c8760e59864faabbdcf6e&amp;id=95646ac6ed" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+        <div id="mc_embed_signup_scroll">
+        <label for="mce-EMAIL">Thank You For Reading, Subscribe to Future Content!</label>
+        <input type="email" value="" name="EMAIL" class="email" id="mce-EMAIL" placeholder="email address" required>
+        
+        <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_3019c8760e59864faabbdcf6e_95646ac6ed" tabindex="-1" value=""></div>
+        <div class="clear"><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"></div>
+        </div>
+    </form>
+</div>
+</article>
+
+    </main>
+    <footer class="bg-dark-gray bottom-0 w-100 pa3" role="contentinfo">
+  <div class="flex justify-between">
+  <a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href="https://jamessevedge.com" >
+    &copy;  James Sevedge 2021 
+  </a>
+    <div>
+
+<a href="http://linkedin.com/in/james-sevedge/" target="_blank" class="link-transition linkedin link dib z-999 pt3 pt0-l mr1" title="LinkedIn link" rel="noopener" aria-label="follow on LinkedIn——Opens in a new window">
+  <svg  height="32px"  style="enable-background:new 0 0 65 65;" version="1.1" viewBox="0 0 65 65" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <path d="M50.837,48.137V36.425c0-6.275-3.35-9.195-7.816-9.195  c-3.604,0-5.219,1.983-6.119,3.374V27.71h-6.79c0.09,1.917,0,20.427,0,20.427h6.79V36.729c0-0.609,0.044-1.219,0.224-1.655  c0.49-1.22,1.607-2.483,3.482-2.483c2.458,0,3.44,1.873,3.44,4.618v10.929H50.837z M22.959,24.922c2.367,0,3.842-1.57,3.842-3.531  c-0.044-2.003-1.475-3.528-3.797-3.528s-3.841,1.524-3.841,3.528c0,1.961,1.474,3.531,3.753,3.531H22.959z M34,64  C17.432,64,4,50.568,4,34C4,17.431,17.432,4,34,4s30,13.431,30,30C64,50.568,50.568,64,34,64z M26.354,48.137V27.71h-6.789v20.427  H26.354z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/>
+</svg>
+
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000" width="8px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/>
+</svg>
+</span></a>
+
+
+<a href="https://github.com/jsevedge" target="_blank" class="link-transition github link dib z-999 pt3 pt0-l mr1" title="Github link" rel="noopener" aria-label="follow on Github——Opens in a new window">
+  <svg  height="32px"  style="enable-background:new 0 0 512 512;" version="1.1" viewBox="0 0 512 512" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+  <path d="M256,32C132.3,32,32,134.8,32,261.7c0,101.5,64.2,187.5,153.2,217.9c11.2,2.1,15.3-5,15.3-11.1   c0-5.5-0.2-19.9-0.3-39.1c-62.3,13.9-75.5-30.8-75.5-30.8c-10.2-26.5-24.9-33.6-24.9-33.6c-20.3-14.3,1.5-14,1.5-14   c22.5,1.6,34.3,23.7,34.3,23.7c20,35.1,52.4,25,65.2,19.1c2-14.8,7.8-25,14.2-30.7c-49.7-5.8-102-25.5-102-113.5   c0-25.1,8.7-45.6,23-61.6c-2.3-5.8-10-29.2,2.2-60.8c0,0,18.8-6.2,61.6,23.5c17.9-5.1,37-7.6,56.1-7.7c19,0.1,38.2,2.6,56.1,7.7   c42.8-29.7,61.5-23.5,61.5-23.5c12.2,31.6,4.5,55,2.2,60.8c14.3,16.1,23,36.6,23,61.6c0,88.2-52.4,107.6-102.3,113.3   c8,7.1,15.2,21.1,15.2,42.5c0,30.7-0.3,55.5-0.3,63c0,6.1,4,13.3,15.4,11C415.9,449.1,480,363.1,480,261.7   C480,134.8,379.7,32,256,32z"/>
+</svg>
+
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000" width="8px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/>
+</svg>
+</span></a>
+
+
+<a href="https://jamessevedge.com/index.xml" target="_blank" class="link-transition github link dib z-999 pt3 pt0-l mr1" title="RSS feed" rel="noopener" aria-label="follow on RSS feed——Opens in a new window">
+  <svg  height="32px"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M0 0v24h24v-24h-24zm6.168 20c-1.197 0-2.168-.969-2.168-2.165s.971-2.165 2.168-2.165 2.167.969 2.167 2.165-.97 2.165-2.167 2.165zm5.18 0c-.041-4.029-3.314-7.298-7.348-7.339v-3.207c5.814.041 10.518 4.739 10.56 10.546h-3.212zm5.441 0c-.021-7.063-5.736-12.761-12.789-12.792v-3.208c8.83.031 15.98 7.179 16 16h-3.211z"/>
+</svg>
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000" width="8px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/>
+</svg>
+</span></a>
+
+</div>
+  </div>
+</footer>
+
+    
+
+  <script src="/dist/js/app.3fc0f988d21662902933.js"></script>
+
+
+  </body>
+</html>
