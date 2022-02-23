@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+    <title>Building a Custom Tesla Light Show | James Sevedge</title>
+
+    <meta name="viewport" content="width=device-width,minimum-scale=1">
+    <meta name="generator" content="Hugo 0.87.0" />
+    
+      <META NAME="ROBOTS" CONTENT="INDEX, FOLLOW">
+    
+
+    
+    
+      <link href="/dist/css/app.1cb140d8ba31d5b2f1114537dd04802a.css" rel="stylesheet">
+    
+
+    
+
+    
+      
+    
+
+    
+    
+    <meta property="og:title" content="Building a Custom Tesla Light Show" />
+<meta property="og:description" content="In late December Tesla pushed out a new major update to my Model Y dubbed &ldquo;version 11.0&rdquo; which included a revamped UI and a bunch of new features. Probably the coolest feature released was the Light Show which allows creators to use a sequence show tool called xLights to turn on/off or ramp various lights, open/close the windows, open/close the trunk, etc. They also included a default light show which at the time was holiday themed that got a good reaction by friends/family, pretty sweet to get OTA updates on a car right?" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://jamessevedge.com/articles/custom-tesla-light-show/" /><meta property="article:section" content="articles" />
+<meta property="article:published_time" content="2022-02-11T00:00:00+00:00" />
+<meta property="article:modified_time" content="2022-02-11T00:00:00+00:00" />
+
+<meta itemprop="name" content="Building a Custom Tesla Light Show">
+<meta itemprop="description" content="In late December Tesla pushed out a new major update to my Model Y dubbed &ldquo;version 11.0&rdquo; which included a revamped UI and a bunch of new features. Probably the coolest feature released was the Light Show which allows creators to use a sequence show tool called xLights to turn on/off or ramp various lights, open/close the windows, open/close the trunk, etc. They also included a default light show which at the time was holiday themed that got a good reaction by friends/family, pretty sweet to get OTA updates on a car right?"><meta itemprop="datePublished" content="2022-02-11T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2022-02-11T00:00:00+00:00" />
+<meta itemprop="wordCount" content="944">
+<meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Building a Custom Tesla Light Show"/>
+<meta name="twitter:description" content="In late December Tesla pushed out a new major update to my Model Y dubbed &ldquo;version 11.0&rdquo; which included a revamped UI and a bunch of new features. Probably the coolest feature released was the Light Show which allows creators to use a sequence show tool called xLights to turn on/off or ramp various lights, open/close the windows, open/close the trunk, etc. They also included a default light show which at the time was holiday themed that got a good reaction by friends/family, pretty sweet to get OTA updates on a car right?"/>
+
+      
+        
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-Q5B427HWSJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-Q5B427HWSJ');
+</script>
+      
+    
+  </head>
+
+  <body class="ma0 avenir bg-near-white production">
+
+    
+  
+
+  <header>
+    <div class="bg-dark-gray">
+      <nav class="pv3 ph3 ph4-ns" role="navigation">
+  <div class="flex-l justify-between items-center center">
+    <a href="https://jamessevedge.com" class="f3 fw2 hover-white no-underline white-90 dib">
+      James Sevedge
+    </a>
+    <div class="flex-l items-center">
+      
+
+      
+        <ul class="pl0 mr3">
+          
+          <li class="list f5 f4-ns fw4 dib pr3">
+            <a class="hover-white no-underline white-90" href="/articles/" title="Articles page">
+              Articles
+            </a>
+          </li>
+          
+          <li class="list f5 f4-ns fw4 dib pr3">
+            <a class="hover-white no-underline white-90" href="/about/" title="About page">
+              About
+            </a>
+          </li>
+          
+          <li class="list f5 f4-ns fw4 dib pr3">
+            <a class="hover-white no-underline white-90" href="/contact/" title="Contact page">
+              Contact
+            </a>
+          </li>
+          
+        </ul>
+      
+      
+      
+    </div>
+  </div>
+</nav>
+
+    </div>
+  </header>
+
+
+
+    <main class="pb7" role="main">
+      
+  
+  <article class="flex-wrap w-100 ph4">
+    <header class="mt4 w-100 tc">
+      <aside class="instapaper_ignoref b helvetica tracked">
+        ARTICLES
+      </aside>
+      
+
+
+
+
+  <div id="sharing" class="mt3">
+
+    
+    
+    <a href="https://twitter.com/share?url=https://jamessevedge.com/articles/custom-tesla-light-show/&amp;text=Building%20a%20Custom%20Tesla%20Light%20Show" class="twitter no-underline" aria-label="share on Twitter">
+      <svg height="32px"  style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M37.167,22.283c-2.619,0.953-4.274,3.411-4.086,6.101  l0.063,1.038l-1.048-0.127c-3.813-0.487-7.145-2.139-9.974-4.915l-1.383-1.377l-0.356,1.017c-0.754,2.267-0.272,4.661,1.299,6.271  c0.838,0.89,0.649,1.017-0.796,0.487c-0.503-0.169-0.943-0.296-0.985-0.233c-0.146,0.149,0.356,2.076,0.754,2.839  c0.545,1.06,1.655,2.097,2.871,2.712l1.027,0.487l-1.215,0.021c-1.173,0-1.215,0.021-1.089,0.467  c0.419,1.377,2.074,2.839,3.918,3.475l1.299,0.444l-1.131,0.678c-1.676,0.976-3.646,1.526-5.616,1.568  C19.775,43.256,19,43.341,19,43.405c0,0.211,2.557,1.397,4.044,1.864c4.463,1.377,9.765,0.783,13.746-1.568  c2.829-1.673,5.657-5,6.978-8.221c0.713-1.716,1.425-4.851,1.425-6.354c0-0.975,0.063-1.102,1.236-2.267  c0.692-0.678,1.341-1.419,1.467-1.631c0.21-0.403,0.188-0.403-0.88-0.043c-1.781,0.636-2.033,0.551-1.152-0.402  c0.649-0.678,1.425-1.907,1.425-2.267c0-0.063-0.314,0.042-0.671,0.233c-0.377,0.212-1.215,0.53-1.844,0.72l-1.131,0.361l-1.027-0.7  c-0.566-0.381-1.361-0.805-1.781-0.932C39.766,21.902,38.131,21.944,37.167,22.283z M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4  s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/></svg>
+
+    </a>
+
+    
+    <a href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https://jamessevedge.com/articles/custom-tesla-light-show/&amp;title=Building%20a%20Custom%20Tesla%20Light%20Show" class="linkedin no-underline" aria-label="share on LinkedIn">
+      <svg  height="32px"  style="enable-background:new 0 0 65 65;" version="1.1" viewBox="0 0 65 65" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <path d="M50.837,48.137V36.425c0-6.275-3.35-9.195-7.816-9.195  c-3.604,0-5.219,1.983-6.119,3.374V27.71h-6.79c0.09,1.917,0,20.427,0,20.427h6.79V36.729c0-0.609,0.044-1.219,0.224-1.655  c0.49-1.22,1.607-2.483,3.482-2.483c2.458,0,3.44,1.873,3.44,4.618v10.929H50.837z M22.959,24.922c2.367,0,3.842-1.57,3.842-3.531  c-0.044-2.003-1.475-3.528-3.797-3.528s-3.841,1.524-3.841,3.528c0,1.961,1.474,3.531,3.753,3.531H22.959z M34,64  C17.432,64,4,50.568,4,34C4,17.431,17.432,4,34,4s30,13.431,30,30C64,50.568,50.568,64,34,64z M26.354,48.137V27.71h-6.789v20.427  H26.354z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/>
+</svg>
+
+    </a>
+  </div>
+
+
+      <h1 class="f1 athelas mt3 mb1">Building a Custom Tesla Light Show</h1>
+      
+      <p class="tracked">
+          By <strong>
+          
+              James Sevedge
+          
+          </strong>
+      </p>
+      
+
+      <time class="f6 mv4 dib tracked" datetime="2022-02-11T00:00:00Z">February 11, 2022</time>
+
+      
+        <span class="f6 mv4 dib tracked"> - 5 minutes read</span>
+        <span class="f6 mv4 dib tracked"> - 944 words</span>
+      
+    </header>
+    <div class="nested-copy-line-height lh-copy serif f4 nested-links nested-img mid-gray center w-100 w-75-ns"><ul class="pa0">
+  
+</ul>
+<p>In late December Tesla pushed out a new major update to my Model Y dubbed <a href="https://www.tesla.com/blog/introducing-software-v11-0">&ldquo;version 11.0&rdquo;</a> which included a revamped UI and a bunch of new features.  Probably the coolest feature released was the Light Show which allows creators to use a sequence show tool called xLights to turn on/off or ramp various lights, open/close the windows, open/close the trunk, etc.  They also included a default light show which at the time was holiday themed that got a good reaction by friends/family, pretty sweet to get OTA updates on a car right?  Anyways I finally got around to building a custom light show and figured I would take notes as I went and write about it in case others find it interesting and would like to do the same.</p>
+<h3 id="documentation">Documentation</h3>
+<p>The Tesla engineering team put together a great readme and linting tool which they published under the <code>teslamotors</code> Github organization <a href="https://github.com/teslamotors/light-show">here</a>.  It covered most of the details I needed as long as I was willing to jump around a bit as I progressed.</p>
+<h3 id="installed-software">Installed software</h3>
+<p>Once I read through the documentation I went ahead and installed the xLights application using the Apple app store on my Mac.  <strong>Note</strong> that xLights supports all the major OS platforms, see the <a href="https://xlights.org/releases/">download page</a>.</p>
+<p>I then downloaded the sequenece model the Tesla engineering team created and provided a link to in this <a href="https://github.com/teslamotors/light-show#getting-started-with-the-tesla-xlights-project-directory">section</a> of the readme and imported it into xLights.  This pulls in the 3D car model with the 46 channels (lights, windows, doors, etc) that are configurable and provides a nice visual layout when testing out the light show in xLights.</p>
+<p><img src="/x-lights-overview.png" alt="xLights Overview"></p>
+<h3 id="test-out-the-example-sequence">Test out the example sequence</h3>
+<p>The Tesla engineering team provided an example <a href="https://github.com/teslamotors/light-show#opening-the-example-sequence">light show</a> (not the same one loaded in the car) which you can use to get a feel for how the sequence effects are laid out and validate your USB can be plugged into the car and correctly play a custom light show.  I found this step useful to ensure I didn&rsquo;t take the time to create a light show from scratch and end up running into an issue with USB disk format, etc.</p>
+<p>I downloaded the example, put it into <code>Downloads-&gt;Tesla_Light_Show-&gt;Smooth_Jazz-&gt;LightShow</code>, copied that folder over to the USB, plugged it into the car and tested it out.  Thankfully it worked the first time!  <strong>Note</strong> that I had to wait for a progress bar at the bottom of the modal to complete before pressing play or it would play the last loaded light show.</p>
+<h3 id="creating-my-own-light-show">Creating my own light show</h3>
+<p>First I needed the audio file for the song I wanted to play.  It is surprisingly hard nowadays with streaming services like Spotify, Apple Music, etc. to just get a plain old mp3 anymore&hellip; but Amazon Music to the rescue!  In a couple clicks I found the song, purchased the single and downloaded the mp3 file into a new folder under <code>Downloads-&gt;Tesla_Light_Show-&gt;Bang-&gt;LightShow</code>.</p>
+<p>Now this is where the fun part actually begins, I needed to create the .fseq file using xLights which contains all the effects matched up to the audio.  To do this I opened xLights, created a new sequence and imported the mp3 file.  I put on some headphones and proceeded to try and grok the xLights interface and add effects 10-15 seconds at a time.  Once I had a good chunk added I would play it back and modify the effects until they lined up with the audio (or close enough!).  Once I got through the first chorus, verse and bridge I was able to start chunking the sequences with copy/paste.  I would then overlay some additional effects to build the light show as it progressed through the song.</p>
+<p>According to the Tesla light show readme there is a max of 651 effects allowed and so they wrote a python validator script to help sequence authors figure out if they were within the parameters.  Once I completed the light show and saved the .fseq file to the LightShow folder I ran that tool.  Apparently I had a lot more effects I could still add, maybe I will revist this sequence again another time.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">   $ python validator.py ~/Downloads/Tesla_Shows/Bang/LightShow/lightshow.fseq
+   Found <span style="color:#ae81ff">3417</span> frames, step time of <span style="color:#ae81ff">50</span> ms <span style="color:#66d9ef">for</span> a total duration of 0:02:50.850000.
+   Used 45.23% of the available memory
+</code></pre></div><p>Here is what the folder structure that was copied over to the USB drive looked like.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">├── LightShow
+│   ├── lightshow.fseq
+│   ├── lightshow.mp3
+│   ├── lightshow.xsq
+</code></pre></div><p>And this is a preview of how the light show turned out.</p>
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe src="https://www.youtube.com/embed/M-SK5_alK1A" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
+</div>
+
+<p>I spent probably about 4 hours getting from no idea how to create a light show for my car to understanding and creating one from scratch so kudos to the Tesla engineering team for good documentation and picking a tool (xLights) that has a decent interface for creating a sequence.  I had a blast creating this light show and intend to create more in the future that makes full use of the advanced effects including tailgate open/close and light ramping.</p>
+<p>One final note is it did occur to me that it would be nice to have a single USB with multiple custom light shows and the display would provide a picker with the list of shows available.  I filed a Github RFE which was promptly closed as a dupe of <a href="https://github.com/teslamotors/light-show/issues/8">#8</a>.  When I took a look at that issue it appears the team appreciated the suggestions but did not commit to implementing it.  So a typical Tesla response.</p>
+<h3 id="additional-resources">Additional resources</h3>
+<p>Below are some cool resources I discovered before/during/after building the light show and I will keep this list up to date as I find more.</p>
+<ul>
+<li>Catalog of light shows by a variety of contributors: <a href="https://teslalightshare.io">https://teslalightshare.io</a></li>
+</ul>
+</div>
+<link href="//cdn-images.mailchimp.com/embedcode/horizontal-slim-10_7.css" rel="stylesheet" type="text/css">
+<div id="mc_embed_signup" class="pt5">
+    <form action="https://jamessevedge.us20.list-manage.com/subscribe/post?u=3019c8760e59864faabbdcf6e&amp;id=95646ac6ed" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+        <div id="mc_embed_signup_scroll">
+        <label for="mce-EMAIL">Subscribe to future content</label>
+        <input type="email" value="" name="EMAIL" class="email" id="mce-EMAIL" placeholder="email address" required>
+        
+        <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_3019c8760e59864faabbdcf6e_95646ac6ed" tabindex="-1" value=""></div>
+        <div class="clear"><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"></div>
+        </div>
+    </form>
+</div>
+</article>
+
+    </main>
+    <footer class="bg-dark-gray bottom-0 w-100 pa3" role="contentinfo">
+  <div class="flex justify-between">
+  <a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href="https://jamessevedge.com" >
+    &copy;  James Sevedge 2022 
+  </a>
+    <div>
+
+<a href="http://linkedin.com/in/james-sevedge/" target="_blank" class="link-transition linkedin link dib z-999 pt3 pt0-l mr1" title="LinkedIn link" rel="noopener" aria-label="follow on LinkedIn——Opens in a new window">
+  <svg  height="32px"  style="enable-background:new 0 0 65 65;" version="1.1" viewBox="0 0 65 65" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <path d="M50.837,48.137V36.425c0-6.275-3.35-9.195-7.816-9.195  c-3.604,0-5.219,1.983-6.119,3.374V27.71h-6.79c0.09,1.917,0,20.427,0,20.427h6.79V36.729c0-0.609,0.044-1.219,0.224-1.655  c0.49-1.22,1.607-2.483,3.482-2.483c2.458,0,3.44,1.873,3.44,4.618v10.929H50.837z M22.959,24.922c2.367,0,3.842-1.57,3.842-3.531  c-0.044-2.003-1.475-3.528-3.797-3.528s-3.841,1.524-3.841,3.528c0,1.961,1.474,3.531,3.753,3.531H22.959z M34,64  C17.432,64,4,50.568,4,34C4,17.431,17.432,4,34,4s30,13.431,30,30C64,50.568,50.568,64,34,64z M26.354,48.137V27.71h-6.789v20.427  H26.354z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/>
+</svg>
+
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000" width="8px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/>
+</svg>
+</span></a>
+
+
+<a href="https://github.com/jsevedge" target="_blank" class="link-transition github link dib z-999 pt3 pt0-l mr1" title="Github link" rel="noopener" aria-label="follow on Github——Opens in a new window">
+  <svg  height="32px"  style="enable-background:new 0 0 512 512;" version="1.1" viewBox="0 0 512 512" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+  <path d="M256,32C132.3,32,32,134.8,32,261.7c0,101.5,64.2,187.5,153.2,217.9c11.2,2.1,15.3-5,15.3-11.1   c0-5.5-0.2-19.9-0.3-39.1c-62.3,13.9-75.5-30.8-75.5-30.8c-10.2-26.5-24.9-33.6-24.9-33.6c-20.3-14.3,1.5-14,1.5-14   c22.5,1.6,34.3,23.7,34.3,23.7c20,35.1,52.4,25,65.2,19.1c2-14.8,7.8-25,14.2-30.7c-49.7-5.8-102-25.5-102-113.5   c0-25.1,8.7-45.6,23-61.6c-2.3-5.8-10-29.2,2.2-60.8c0,0,18.8-6.2,61.6,23.5c17.9-5.1,37-7.6,56.1-7.7c19,0.1,38.2,2.6,56.1,7.7   c42.8-29.7,61.5-23.5,61.5-23.5c12.2,31.6,4.5,55,2.2,60.8c14.3,16.1,23,36.6,23,61.6c0,88.2-52.4,107.6-102.3,113.3   c8,7.1,15.2,21.1,15.2,42.5c0,30.7-0.3,55.5-0.3,63c0,6.1,4,13.3,15.4,11C415.9,449.1,480,363.1,480,261.7   C480,134.8,379.7,32,256,32z"/>
+</svg>
+
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000" width="8px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/>
+</svg>
+</span></a>
+
+
+<a href="https://jamessevedge.com/index.xml" target="_blank" class="link-transition github link dib z-999 pt3 pt0-l mr1" title="RSS feed" rel="noopener" aria-label="follow on RSS feed——Opens in a new window">
+  <svg  height="32px"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M0 0v24h24v-24h-24zm6.168 20c-1.197 0-2.168-.969-2.168-2.165s.971-2.165 2.168-2.165 2.167.969 2.167 2.165-.97 2.165-2.167 2.165zm5.18 0c-.041-4.029-3.314-7.298-7.348-7.339v-3.207c5.814.041 10.518 4.739 10.56 10.546h-3.212zm5.441 0c-.021-7.063-5.736-12.761-12.789-12.792v-3.208c8.83.031 15.98 7.179 16 16h-3.211z"/>
+</svg>
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000" width="8px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/>
+</svg>
+</span></a>
+
+</div>
+  </div>
+</footer>
+
+    
+
+  <script src="/dist/js/app.3fc0f988d21662902933.js"></script>
+
+
+  </body>
+</html>

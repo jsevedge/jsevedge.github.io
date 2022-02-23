@@ -8,7 +8,51 @@
     <language>en-us</language>
     <managingEditor>jjesc1031@gmail.com (James Sevedge)</managingEditor>
     <webMaster>jjesc1031@gmail.com (James Sevedge)</webMaster>
-    <lastBuildDate>Mon, 31 Jan 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://jamessevedge.com/articles/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 11 Feb 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://jamessevedge.com/articles/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Building a Custom Tesla Light Show</title>
+      <link>https://jamessevedge.com/articles/custom-tesla-light-show/</link>
+      <pubDate>Fri, 11 Feb 2022 00:00:00 +0000</pubDate>
+      <author>jjesc1031@gmail.com (James Sevedge)</author>
+      <guid>https://jamessevedge.com/articles/custom-tesla-light-show/</guid>
+      <description>&lt;p&gt;In late December Tesla pushed out a new major update to my Model Y dubbed &lt;a href=&#34;https://www.tesla.com/blog/introducing-software-v11-0&#34;&gt;&amp;ldquo;version 11.0&amp;rdquo;&lt;/a&gt; which included a revamped UI and a bunch of new features.  Probably the coolest feature released was the Light Show which allows creators to use a sequence show tool called xLights to turn on/off or ramp various lights, open/close the windows, open/close the trunk, etc.  They also included a default light show which at the time was holiday themed that got a good reaction by friends/family, pretty sweet to get OTA updates on a car right?  Anyways I finally got around to building a custom light show and figured I would take notes as I went and write about it in case others find it interesting and would like to do the same.&lt;/p&gt;
+&lt;h3 id=&#34;documentation&#34;&gt;Documentation&lt;/h3&gt;
+&lt;p&gt;The Tesla engineering team put together a great readme and linting tool which they published under the &lt;code&gt;teslamotors&lt;/code&gt; Github organization &lt;a href=&#34;https://github.com/teslamotors/light-show&#34;&gt;here&lt;/a&gt;.  It covered most of the details I needed as long as I was willing to jump around a bit as I progressed.&lt;/p&gt;
+&lt;h3 id=&#34;installed-software&#34;&gt;Installed software&lt;/h3&gt;
+&lt;p&gt;Once I read through the documentation I went ahead and installed the xLights application using the Apple app store on my Mac.  &lt;strong&gt;Note&lt;/strong&gt; that xLights supports all the major OS platforms, see the &lt;a href=&#34;https://xlights.org/releases/&#34;&gt;download page&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;I then downloaded the sequenece model the Tesla engineering team created and provided a link to in this &lt;a href=&#34;https://github.com/teslamotors/light-show#getting-started-with-the-tesla-xlights-project-directory&#34;&gt;section&lt;/a&gt; of the readme and imported it into xLights.  This pulls in the 3D car model with the 46 channels (lights, windows, doors, etc) that are configurable and provides a nice visual layout when testing out the light show in xLights.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://jamessevedge.com/x-lights-overview.png&#34; alt=&#34;xLights Overview&#34;&gt;&lt;/p&gt;
+&lt;h3 id=&#34;test-out-the-example-sequence&#34;&gt;Test out the example sequence&lt;/h3&gt;
+&lt;p&gt;The Tesla engineering team provided an example &lt;a href=&#34;https://github.com/teslamotors/light-show#opening-the-example-sequence&#34;&gt;light show&lt;/a&gt; (not the same one loaded in the car) which you can use to get a feel for how the sequence effects are laid out and validate your USB can be plugged into the car and correctly play a custom light show.  I found this step useful to ensure I didn&amp;rsquo;t take the time to create a light show from scratch and end up running into an issue with USB disk format, etc.&lt;/p&gt;
+&lt;p&gt;I downloaded the example, put it into &lt;code&gt;Downloads-&amp;gt;Tesla_Light_Show-&amp;gt;Smooth_Jazz-&amp;gt;LightShow&lt;/code&gt;, copied that folder over to the USB, plugged it into the car and tested it out.  Thankfully it worked the first time!  &lt;strong&gt;Note&lt;/strong&gt; that I had to wait for a progress bar at the bottom of the modal to complete before pressing play or it would play the last loaded light show.&lt;/p&gt;
+&lt;h3 id=&#34;creating-my-own-light-show&#34;&gt;Creating my own light show&lt;/h3&gt;
+&lt;p&gt;First I needed the audio file for the song I wanted to play.  It is surprisingly hard nowadays with streaming services like Spotify, Apple Music, etc. to just get a plain old mp3 anymore&amp;hellip; but Amazon Music to the rescue!  In a couple clicks I found the song, purchased the single and downloaded the mp3 file into a new folder under &lt;code&gt;Downloads-&amp;gt;Tesla_Light_Show-&amp;gt;Bang-&amp;gt;LightShow&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Now this is where the fun part actually begins, I needed to create the .fseq file using xLights which contains all the effects matched up to the audio.  To do this I opened xLights, created a new sequence and imported the mp3 file.  I put on some headphones and proceeded to try and grok the xLights interface and add effects 10-15 seconds at a time.  Once I had a good chunk added I would play it back and modify the effects until they lined up with the audio (or close enough!).  Once I got through the first chorus, verse and bridge I was able to start chunking the sequences with copy/paste.  I would then overlay some additional effects to build the light show as it progressed through the song.&lt;/p&gt;
+&lt;p&gt;According to the Tesla light show readme there is a max of 651 effects allowed and so they wrote a python validator script to help sequence authors figure out if they were within the parameters.  Once I completed the light show and saved the .fseq file to the LightShow folder I ran that tool.  Apparently I had a lot more effects I could still add, maybe I will revist this sequence again another time.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;   $ python validator.py ~/Downloads/Tesla_Shows/Bang/LightShow/lightshow.fseq
+   Found &lt;span style=&#34;color:#ae81ff&#34;&gt;3417&lt;/span&gt; frames, step time of &lt;span style=&#34;color:#ae81ff&#34;&gt;50&lt;/span&gt; ms &lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; a total duration of 0:02:50.850000.
+   Used 45.23% of the available memory
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Here is what the folder structure that was copied over to the USB drive looked like.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;├── LightShow
+│   ├── lightshow.fseq
+│   ├── lightshow.mp3
+│   ├── lightshow.xsq
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;And this is a preview of how the light show turned out.&lt;/p&gt;
+
+&lt;div style=&#34;position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;&#34;&gt;
+  &lt;iframe src=&#34;https://www.youtube.com/embed/M-SK5_alK1A&#34; style=&#34;position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;&#34; allowfullscreen title=&#34;YouTube Video&#34;&gt;&lt;/iframe&gt;
+&lt;/div&gt;
+
+&lt;p&gt;I spent probably about 4 hours getting from no idea how to create a light show for my car to understanding and creating one from scratch so kudos to the Tesla engineering team for good documentation and picking a tool (xLights) that has a decent interface for creating a sequence.  I had a blast creating this light show and intend to create more in the future that makes full use of the advanced effects including tailgate open/close and light ramping.&lt;/p&gt;
+&lt;p&gt;One final note is it did occur to me that it would be nice to have a single USB with multiple custom light shows and the display would provide a picker with the list of shows available.  I filed a Github RFE which was promptly closed as a dupe of &lt;a href=&#34;https://github.com/teslamotors/light-show/issues/8&#34;&gt;#8&lt;/a&gt;.  When I took a look at that issue it appears the team appreciated the suggestions but did not commit to implementing it.  So a typical Tesla response.&lt;/p&gt;
+&lt;h3 id=&#34;additional-resources&#34;&gt;Additional resources&lt;/h3&gt;
+&lt;p&gt;Below are some cool resources I discovered before/during/after building the light show and I will keep this list up to date as I find more.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Catalog of light shows by a variety of contributors: &lt;a href=&#34;https://teslalightshare.io&#34;&gt;https://teslalightshare.io&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
     <item>
       <title>Red Light Green Light</title>
       <link>https://jamessevedge.com/articles/red-light-green-light/</link>
